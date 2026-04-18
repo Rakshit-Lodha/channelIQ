@@ -1,26 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #F5F2EA;
+  --paper-warm: #EFEBDE;
+  --paper-card: #FFFFFF;
+  --paper-sunk: #EAE5D5;
+  --ink: #1A1A1A;
+  --ink-2: #3A3A36;
+  --ink-3: #6B6A62;
+  --ink-4: #A09E92;
+  --rule: #D9D3C1;
+  --rule-soft: #E6E1D0;
+  --accent: #C44536;
+  --accent-deep: #A03828;
+  --accent-wash: #F5E4DF;
+  --brass: #8B6A3A;
+  --shadow-sm: 0 1px 0 rgba(26,26,26,0.04);
+  --shadow-md: 0 1px 0 rgba(26,26,26,0.04), 0 4px 16px -8px rgba(26,26,26,0.08);
+  --shadow-lg: 0 1px 0 rgba(26,26,26,0.04), 0 20px 40px -18px rgba(26,26,26,0.15);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-paper-warm: var(--paper-warm);
+  --color-accent: var(--accent);
+  --color-ink: var(--ink);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: 'Instrument Serif', 'EB Garamond', Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+* { box-sizing: border-box; }
+
+@keyframes pulse-bar {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-pulse-bar { animation: pulse-bar 1.6s ease infinite; }
+.animate-fade-in { animation: fadeIn 0.4s ease both; }
