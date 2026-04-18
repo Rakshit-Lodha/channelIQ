@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Logo, Eyebrow, SectionOpen, Pill, Btn, Input, Ornament, MiniLine } from '@/components/ui'
+import { BILLING_PLANS } from '@/lib/billing/plans'
 
 const SERIF = "'Instrument Serif', 'EB Garamond', Georgia, serif"
 const MONO = 'var(--font-geist-mono)'
@@ -109,15 +110,15 @@ export default function LandingPage() {
       <section id="pricing" style={{ padding: '96px 64px', maxWidth: 1200, margin: '0 auto' }}>
         <SectionOpen num="§ 04">Subscription</SectionOpen>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 48 }}>
-          <h2 style={{ fontFamily: SERIF, fontSize: 56, fontWeight: 400, margin: 0 }}>One price. Cancel whenever.</h2>
+          <h2 style={{ fontFamily: SERIF, fontSize: 56, fontWeight: 400, margin: 0 }}>Monthly plans. Cancel whenever.</h2>
           <div style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 14, color: 'var(--brass)', maxWidth: 280, textAlign: 'right' as const }}>
-            No tiers, no upsells.<br />Try first, pay only if it earns its keep.
+            Try first, pay only if it earns its keep.<br />Upgrade when the work gets heavier.
           </div>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
-          <PlanCard name="Quarterly" price="₹2,400" period="per quarter" tag="for the curious" features={['1 channel','Up to 10 competitors','Daily refresh','Email the dashboard']} />
-          <PlanCard name="Annual" price="₹7,200" period="per year" tag="for the committed" features={['1 channel','Up to 10 competitors','Daily refresh','Script atlas','Two months free']} featured />
-          <PlanCard name="Studio" price="₹24,000" period="per year" tag="for agencies" features={['Up to 5 channels','Unlimited competitors','Shared workspace','Weekly print edition']} />
+          <PlanCard name={BILLING_PLANS.basic.name} price={BILLING_PLANS.basic.price} period={BILLING_PLANS.basic.period} tag="for the first read" features={BILLING_PLANS.basic.features} />
+          <PlanCard name={BILLING_PLANS.intermediate.name} price={BILLING_PLANS.intermediate.price} period={BILLING_PLANS.intermediate.period} tag="for the weekly operator" features={BILLING_PLANS.intermediate.features} featured />
+          <PlanCard name={BILLING_PLANS.full_access.name} price={BILLING_PLANS.full_access.price} period={BILLING_PLANS.full_access.period} tag="for teams" features={BILLING_PLANS.full_access.features} />
         </div>
       </section>
 
@@ -167,7 +168,7 @@ function DashboardPreviewCard() {
 }
 
 function PlanCard({ name, price, period, tag, features, featured }: {
-  name: string; price: string; period: string; tag: string; features: string[]; featured?: boolean
+  name: string; price: string; period: string; tag: string; features: readonly string[]; featured?: boolean
 }) {
   const router = useRouter()
   return (

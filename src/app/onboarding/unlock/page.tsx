@@ -1,33 +1,59 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Logo, SectionOpen, Btn, Input, Pill, Avatar, ChannelMark, formatCount } from '@/components/ui'
+import { Logo, SectionOpen, Btn, Pill, Avatar, ChannelMark, formatCount } from '@/components/ui'
 import { useStore } from '@/lib/store'
 import { OnboardingProgress } from '../channel/page'
+import { BILLING_PLANS, BillingPlanKey } from '@/lib/billing/plans'
 
 const SERIF = "'Instrument Serif', 'EB Garamond', Georgia, serif"
 const MONO = 'var(--font-geist-mono)'
 
-const PLANS = {
-  quarterly: { price: '₹2,400', period: 'per quarter', savings: null, monthly: '₹800/mo' },
-  annual: { price: '₹7,200', period: 'per year', savings: 'Save ₹2,400 · 2 months free', monthly: '₹600/mo' },
-  studio: { price: '₹24,000', period: 'per year', savings: 'For teams & agencies', monthly: '₹2,000/mo' },
-} as const
-
-type PlanKey = keyof typeof PLANS
-
 export default function UnlockPage() {
   const router = useRouter()
   const { myChannel, competitors, unlock } = useStore()
-  const [plan, setPlan] = useState<PlanKey>('annual')
+  const [plan, setPlan] = useState<BillingPlanKey>('intermediate')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleUnlock = async () => {
     setLoading(true)
-    await new Promise(r => setTimeout(r, 800))
-    unlock()
-    alert('🎉 Dashboard unlocked! (Dashboard view coming in the next round.)')
-    router.push('/')
+    setError('')
+
+    try {
+      await loadRazorpayCheckout()
+
+      const res = await fetch('/api/razorpay/subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planKey: plan }),
+      })
+      const checkout = await res.json()
+
+      if (!res.ok) throw new Error(checkout.error || 'Unable to start checkout')
+
+      const razorpay = new window.Razorpay({
+        key: checkout.keyId,
+        subscription_id: checkout.subscriptionId,
+        name: checkout.name,
+        description: checkout.description,
+        prefill: checkout.prefill,
+        theme: { color: '#C44536' },
+        handler: () => {
+          unlock()
+          router.push('/')
+        },
+        modal: {
+          ondismiss: () => setLoading(false),
+        },
+      })
+
+      razorpay.open()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unable to start checkout'
+      setError(message)
+      setLoading(false)
+    }
   }
 
   return (
@@ -107,15 +133,9 @@ export default function UnlockPage() {
                 <div style={{ fontFamily: MONO, fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.16em', color: 'var(--accent)', marginBottom: 16 }}>§ Choose a plan</div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 24 }}>
-                  {(['quarterly', 'annual', 'studio'] as PlanKey[]).map(k => {
+                  {(['basic', 'intermediate', 'full_access'] as BillingPlanKey[]).map(k => {
                     const on = plan === k
-                    const p = PLANS[k]
-                    const labels: Record<PlanKey, [string, string]> = {
-                      quarterly: ['Quarterly', 'for the curious'],
-                      annual: ['Annual', 'for the committed'],
-                      studio: ['Studio', 'for agencies'],
-                    }
-                    const [name, tag] = labels[k]
+                    const p = BILLING_PLANS[k]
                     return (
                       <button key={k} onClick={() => setPlan(k)} style={{
                         background: on ? 'var(--paper-warm)' : 'transparent',
@@ -123,13 +143,13 @@ export default function UnlockPage() {
                         borderRadius: 8, padding: '14px 16px', textAlign: 'left' as const,
                         cursor: 'pointer', fontFamily: 'inherit', position: 'relative', transition: 'all 0.15s',
                       }}>
-                        {k === 'annual' && <div style={{ position: 'absolute', top: -10, right: 16 }}><Pill variant="ink">Recommended</Pill></div>}
+                        {k === 'intermediate' && <div style={{ position: 'absolute', top: -10, right: 16 }}><Pill variant="ink">Recommended</Pill></div>}
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                             <span style={{ width: 14, height: 14, borderRadius: '50%', border: `1.5px solid ${on ? 'var(--accent)' : 'var(--ink-3)'}`, background: on ? 'var(--accent)' : 'transparent', boxShadow: on ? 'inset 0 0 0 3px var(--paper-warm)' : 'none', flexShrink: 0, display: 'inline-block' }} />
                             <div>
-                              <div style={{ fontFamily: SERIF, fontSize: 18 }}>{name}</div>
-                              <div style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)' }}>{tag}</div>
+                              <div style={{ fontFamily: SERIF, fontSize: 18 }}>{p.name}</div>
+                              <div style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)' }}>{p.description}</div>
                             </div>
                           </div>
                           <div style={{ textAlign: 'right' as const }}>
@@ -137,9 +157,9 @@ export default function UnlockPage() {
                             <div style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)' }}>{p.period}</div>
                           </div>
                         </div>
-                        {on && p.savings && (
+                        {on && (
                           <div style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 13, color: 'var(--brass)', marginTop: 10, paddingTop: 10, borderTop: '1px dashed var(--rule)' }}>
-                            {p.savings} · works out to {p.monthly}
+                            {p.features.join(' · ')}
                           </div>
                         )}
                       </button>
@@ -149,32 +169,22 @@ export default function UnlockPage() {
 
                 <hr style={{ border: 'none', borderTop: '1px solid var(--rule)', margin: '0 0 20px' }} />
 
-                {/* Mock payment form */}
+                {/* Razorpay Checkout */}
                 <div style={{ fontFamily: MONO, fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.12em', color: 'var(--ink-3)', marginBottom: 12 }}>§ Payment</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  <Input label="Card number" placeholder="4242 4242 4242 4242" />
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <Input label="Expiry" placeholder="MM / YY" />
-                    <Input label="CVC" placeholder="123" />
-                  </div>
-                  <Input label="Name on card" placeholder="Ishita Rao" />
+                <div style={{ background: 'var(--paper-warm)', border: '1px solid var(--rule)', borderRadius: 8, padding: 16, fontSize: 13, color: 'var(--ink-2)', lineHeight: 1.55 }}>
+                  Continue to Razorpay to pay by UPI, card, netbanking, or another available method. Your dashboard opens after Razorpay confirms the subscription.
                 </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
-                  <span style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)' }}>or pay with</span>
-                  <button style={{ border: '1px solid var(--rule)', background: 'transparent', padding: '5px 12px', borderRadius: 999, fontFamily: MONO, fontSize: 11, cursor: 'pointer' }}>UPI</button>
-                  <button style={{ border: '1px solid var(--rule)', background: 'transparent', padding: '5px 12px', borderRadius: 999, fontFamily: MONO, fontSize: 11, cursor: 'pointer' }}>Razorpay</button>
-                </div>
+                {error && <div style={{ fontSize: 13, color: 'var(--accent)', background: 'var(--accent-wash)', padding: '10px 14px', borderRadius: 6, marginTop: 12 }}>{error}</div>}
 
                 <hr style={{ border: 'none', borderTop: '1px solid var(--rule)', margin: '20px 0' }} />
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                   <span style={{ fontFamily: SERIF, fontSize: 16 }}>Total today</span>
-                  <span style={{ fontFamily: SERIF, fontSize: 28, fontWeight: 400 }}>{PLANS[plan].price}</span>
+                  <span style={{ fontFamily: SERIF, fontSize: 28, fontWeight: 400 }}>{BILLING_PLANS[plan].price}</span>
                 </div>
 
-                <Btn variant="accent" size="lg" onClick={handleUnlock} style={{ width: '100%', justifyContent: 'center' }}>
-                  {loading ? 'Processing…' : 'Unlock dashboard →'}
+                <Btn variant="accent" size="lg" onClick={handleUnlock} disabled={loading} style={{ width: '100%', justifyContent: 'center' }}>
+                  {loading ? 'Opening Razorpay...' : 'Continue to Razorpay'}
                 </Btn>
 
                 <div style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)', marginTop: 12, lineHeight: 1.55 }}>
@@ -200,4 +210,34 @@ export default function UnlockPage() {
       </div>
     </div>
   )
+}
+
+declare global {
+  interface Window {
+    Razorpay: new (options: RazorpayCheckoutOptions) => { open: () => void }
+  }
+}
+
+interface RazorpayCheckoutOptions {
+  key: string
+  subscription_id: string
+  name: string
+  description: string
+  prefill?: { name?: string; email?: string }
+  theme?: { color?: string }
+  handler: () => void
+  modal?: { ondismiss?: () => void }
+}
+
+function loadRazorpayCheckout() {
+  if (typeof window === 'undefined') return Promise.reject(new Error('Checkout is only available in the browser'))
+  if (window.Razorpay) return Promise.resolve()
+
+  return new Promise<void>((resolve, reject) => {
+    const script = document.createElement('script')
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.onload = () => resolve()
+    script.onerror = () => reject(new Error('Unable to load Razorpay Checkout'))
+    document.body.appendChild(script)
+  })
 }
