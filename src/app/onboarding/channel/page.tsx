@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Logo, Eyebrow, SectionOpen, Btn, Input, Meter, ChannelMark, formatCount } from '@/components/ui'
 import { useStore, type ChannelData } from '@/lib/store'
+import { saveChannel } from '@/lib/supabase/channels'
 
 const SERIF = "'Instrument Serif', 'EB Garamond', Georgia, serif"
 const MONO = 'var(--font-geist-mono)'
@@ -11,7 +12,7 @@ export default function ChannelPage() {
   const router = useRouter()
   const { myChannel, setMyChannel, user } = useStore()
   const [url, setUrl] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'found' | 'error'>('idle')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'found' | 'error'>(myChannel ? 'found' : 'idle')
   const [found, setFound] = useState<ChannelData | null>(myChannel)
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -35,9 +36,10 @@ export default function ChannelPage() {
     }
   }
 
-  const confirm = () => {
+  const confirm = async () => {
     if (!found) return
     setMyChannel(found)
+    await saveChannel(found, true)
     router.push('/onboarding/competitors')
   }
 

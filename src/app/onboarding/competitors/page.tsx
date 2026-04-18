@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { Logo, Eyebrow, SectionOpen, Btn, Input, Meter, ChannelMark, Pill, formatCount } from '@/components/ui'
 import { useStore, type ChannelData } from '@/lib/store'
 import { OnboardingProgress } from '../channel/page'
+import { saveChannel, deleteChannel } from '@/lib/supabase/channels'
 
 const SERIF = "'Instrument Serif', 'EB Garamond', Georgia, serif"
 const MONO = 'var(--font-geist-mono)'
@@ -31,6 +32,7 @@ export default function CompetitorsPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Channel not found')
       addCompetitor(data.channel)
+      await saveChannel(data.channel, false)
       setUrl('')
       setStatus('idle')
     } catch (err: unknown) {
@@ -118,7 +120,10 @@ export default function CompetitorsPage() {
                 ) : (
                   <div>
                     {competitors.map((c, i) => (
-                      <ChannelRow key={c.id} channel={c} index={i} isLast={i === competitors.length - 1} onRemove={() => removeCompetitor(c.id)} />
+                      <ChannelRow key={c.id} channel={c} index={i} isLast={i === competitors.length - 1} onRemove={() => {
+                      removeCompetitor(c.id)
+                      deleteChannel(c.id)
+                    }} />
                     ))}
                   </div>
                 )}

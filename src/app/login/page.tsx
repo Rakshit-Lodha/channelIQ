@@ -3,26 +3,57 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Logo, Btn, Input, Avatar } from '@/components/ui'
 import { useStore } from '@/lib/store'
+import { createClient } from '@/lib/supabase/client'
 
 const SERIF = "'Instrument Serif', 'EB Garamond', Georgia, serif"
 const MONO = 'var(--font-geist-mono)'
 
 export default function LoginPage() {
   const router = useRouter()
-  const setUser = useStore((s) => s.setUser)
+  const { myChannel, competitors, generatingStarted, generatingDone, unlocked, setUser } = useStore()
   const [tab, setTab] = useState<'signup' | 'signin'>('signup')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const resumeRoute = () => {
+    if (unlocked) return '/'
+    if (generatingDone) return '/onboarding/unlock'
+    if (generatingStarted) return '/onboarding/generating'
+    if (competitors.length >= 1) return '/onboarding/generating'
+    if (myChannel) return '/onboarding/competitors'
+    return '/onboarding/channel'
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    // Mock auth — just store name+email and continue
-    await new Promise((r) => setTimeout(r, 600))
-    setUser({ name: name || email.split('@')[0], email })
-    router.push('/onboarding/channel')
+    setError('')
+    const supabase = createClient()
+
+    if (tab === 'signup') {
+      const { data, error: err } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { name: name || email.split('@')[0] } },
+      })
+      if (err) { setError(err.message); setLoading(false); return }
+      if (data.user) {
+        setUser({ id: data.user.id, name: name || email.split('@')[0], email })
+        router.push('/onboarding/channel')
+      }
+    } else {
+      const { data, error: err } = await supabase.auth.signInWithPassword({ email, password })
+      if (err) { setError(err.message); setLoading(false); return }
+      if (data.user) {
+        const displayName = data.user.user_metadata?.name || email.split('@')[0]
+        setUser({ id: data.user.id, name: displayName, email })
+        router.push(resumeRoute())
+      }
+    }
+    setLoading(false)
   }
 
   return (
@@ -92,7 +123,7 @@ export default function LoginPage() {
             {/* Tabs */}
             <div style={{ display: 'flex', gap: 24, marginBottom: 32, borderBottom: '1px solid var(--rule)' }}>
               {([['signup', 'Create account'], ['signin', 'Sign in']] as const).map(([k, l]) => (
-                <button key={k} onClick={() => setTab(k)} style={{
+                <button key={k} onClick={() => { setTab(k); setError('') }} style={{
                   background: 'transparent', border: 'none', padding: '10px 0',
                   fontFamily: 'var(--font-geist-sans)', fontSize: 14,
                   color: tab===k?'var(--ink)':'var(--ink-3)', fontWeight: tab===k?500:400,
@@ -104,7 +135,7 @@ export default function LoginPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
               <span style={{ display: 'block', width: 28, height: 1, background: 'var(--ink)', flexShrink: 0 }} />
               <span style={{ fontFamily: MONO, fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', textTransform: 'uppercase' as const }}>
-                Step 01 of 04 · Create your account
+                Step 01 of 04 · {tab === 'signup' ? 'Create your account' : 'Welcome back'}
               </span>
             </div>
 
@@ -112,23 +143,19 @@ export default function LoginPage() {
               {tab==='signup' ? "Let's begin." : 'Welcome back.'}
             </h2>
 
-            {/* Google button (mock) */}
-            <button onClick={handleSubmit} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, width: '100%', padding: 14, background: 'transparent', border: '1px solid var(--rule)', borderRadius: 999, fontFamily: 'var(--font-geist-sans)', fontSize: 14, cursor: 'pointer', marginBottom: 24 }}>
-              <GoogleIcon /> Continue with Google
-            </button>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-              <div style={{ flex: 1, height: 1, background: 'var(--rule)' }} />
-              <span style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)' }}>or with email</span>
-              <div style={{ flex: 1, height: 1, background: 'var(--rule)' }} />
-            </div>
-
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {tab==='signup' && (
                 <Input label="Your name" placeholder="Ishita Rao" value={name} onChange={e=>setName(e.target.value)} />
               )}
               <Input label="Email" type="email" placeholder="you@channel.com" value={email} onChange={e=>setEmail(e.target.value)} required />
-              <Input label="Password" type="password" placeholder="At least 8 characters" value={password} onChange={e=>setPassword(e.target.value)} required />
+              <Input label="Password" type="password" placeholder="At least 6 characters" value={password} onChange={e=>setPassword(e.target.value)} required />
+
+              {error && (
+                <div style={{ fontSize: 13, color: 'var(--accent)', background: 'var(--accent-wash)', padding: '10px 14px', borderRadius: 6 }}>
+                  {error}
+                </div>
+              )}
+
               <Btn variant="accent" size="lg" type="submit" style={{ justifyContent: 'center', width: '100%', marginTop: 8 }}>
                 {loading ? 'Just a moment…' : tab==='signup' ? 'Create account & continue →' : 'Sign in →'}
               </Btn>
@@ -137,7 +164,7 @@ export default function LoginPage() {
             <div style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)', marginTop: 24, lineHeight: 1.6 }}>
               {tab==='signup'
                 ? <>No payment required until your dashboard is ready.</>
-                : <>New? <button onClick={()=>setTab('signup')} style={{ color:'var(--accent)', cursor:'pointer', background:'transparent', border:'none', fontFamily:'inherit', fontSize:'inherit', textDecoration:'underline' }}>Create an account</button> — it's free to try.</>}
+                : <>New? <button onClick={()=>{ setTab('signup'); setError('') }} style={{ color:'var(--accent)', cursor:'pointer', background:'transparent', border:'none', fontFamily:'inherit', fontSize:'inherit', textDecoration:'underline' }}>Create an account</button> — it's free to try.</>}
             </div>
           </div>
         </div>
@@ -154,3 +181,5 @@ const GoogleIcon = () => (
     <path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.6l3.1-3.1A11 11 0 0 0 12 1 11 11 0 0 0 2.2 7.1l3.6 2.8C6.7 7.4 9.1 5.4 12 5.4z"/>
   </svg>
 )
+
+export { GoogleIcon }

@@ -17,7 +17,7 @@ export interface ChannelData {
 
 export interface OnboardingState {
   // Auth
-  user: { name: string; email: string } | null
+  user: { id: string; name: string; email: string } | null
 
   // Channel
   myChannel: ChannelData | null
@@ -31,7 +31,7 @@ export interface OnboardingState {
   unlocked: boolean
 
   // Actions
-  setUser: (user: { name: string; email: string }) => void
+  setUser: (user: { id: string; name: string; email: string }) => void
   setMyChannel: (channel: ChannelData) => void
   addCompetitor: (channel: ChannelData) => void
   removeCompetitor: (id: string) => void
