@@ -56,6 +56,24 @@ export default function LoginPage() {
     setLoading(false)
   }
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true)
+    setError('')
+    const supabase = createClient()
+    const next = resumeRoute()
+    const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`
+
+    const { error: err } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo },
+    })
+
+    if (err) {
+      setError(err.message)
+      setLoading(false)
+    }
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--paper)' }}>
       {/* Top bar */}
@@ -160,6 +178,17 @@ export default function LoginPage() {
                 {loading ? 'Just a moment…' : tab==='signup' ? 'Create account & continue →' : 'Sign in →'}
               </Btn>
             </form>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '24px 0' }}>
+              <span style={{ height: 1, background: 'var(--rule)', flex: 1 }} />
+              <span style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)', textTransform: 'uppercase' as const, letterSpacing: '0.12em' }}>or</span>
+              <span style={{ height: 1, background: 'var(--rule)', flex: 1 }} />
+            </div>
+
+            <Btn variant="ghost" size="lg" onClick={handleGoogleSignIn} disabled={loading} style={{ justifyContent: 'center', width: '100%' }}>
+              <GoogleIcon />
+              Continue with Google
+            </Btn>
 
             <div style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)', marginTop: 24, lineHeight: 1.6 }}>
               {tab==='signup'
