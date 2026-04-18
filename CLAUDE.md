@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## What this is
+
+ChannelIQ is a YouTube analytics and content intelligence tool for creators. A user connects their own YouTube channel plus up to 10 competitor channels. The app fetches public metadata via the YouTube Data API, then generates a dashboard with benchmarks (growth rate, posting cadence), outlier videos, unwritten topic gaps, posting-time heatmaps, and AI-generated script ideas. The dashboard is gated behind a paywall — users go through the full onboarding flow before paying.
+
+The product is India-first (pricing in ₹, India-focused creator examples). Auth and payment are currently mocked prototypes; the YouTube data fetching is real.
+
 ## Commands
 
 ```bash
