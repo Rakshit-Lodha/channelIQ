@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ChannelIQ — Editorial prototype</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --paper: #F5F2EA; --paper-warm: #EFEBDE; --paper-card: #FFFFFF; --paper-sunk: #EAE5D5;
+  --ink: #1A1A1A; --ink-2: #3A3A36; --ink-3: #6B6A62; --ink-4: #A09E92;
+  --rule: #D9D3C1; --rule-soft: #E6E1D0;
+  --accent: #C44536; --accent-deep: #A03828; --accent-wash: #F5E4DF;
+  --brass: #8B6A3A; --sage: #4A6B52;
+  --serif: 'Instrument Serif', 'EB Garamond', Georgia, serif;
+  --sans: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'Geist Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--sp-7:48px;--sp-8:64px;--sp-9:96px;--sp-10:128px;
+  --r-sm:4px;--r-md:6px;--r-lg:10px;--r-xl:16px;--r-round:999px;
+  --shadow-sm:0 1px 0 rgba(26,26,26,0.04);
+  --shadow-md:0 1px 0 rgba(26,26,26,0.04),0 4px 16px -8px rgba(26,26,26,0.08);
+  --shadow-lg:0 1px 0 rgba(26,26,26,0.04),0 20px 40px -18px rgba(26,26,26,0.15);
+}
+*{box-sizing:border-box;}
+html,body,#root{margin:0;padding:0;background:var(--paper);color:var(--ink);}
+body{font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;}
+
+.display{font-family:var(--serif);font-weight:400;letter-spacing:-0.02em;line-height:0.95;padding-bottom:0.08em;}
+.serif{font-family:var(--serif);font-weight:400;letter-spacing:-0.01em;}
+.mono{font-family:var(--mono);}
+.eyebrow{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.16em;color:var(--ink-3);}
+.eyebrow-accent{color:var(--accent);}
+.body{font-size:15px;line-height:1.6;color:var(--ink-2);}
+.body-sm{font-size:13px;line-height:1.55;color:var(--ink-3);}
+.body-lg{font-size:17px;line-height:1.55;color:var(--ink-2);}
+.caption{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:0.02em;}
+.marginalia{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--brass);line-height:1.4;}
+
+.rule{height:1px;background:var(--rule);border:none;margin:var(--sp-5) 0;}
+.rule-dashed{border:none;border-top:1px dashed var(--rule);margin:var(--sp-5) 0;}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--r-round);border:1px solid transparent;font-family:var(--sans);font-size:14px;font-weight:500;letter-spacing:-0.005em;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,background .15s ease;text-decoration:none;line-height:1;}
+.btn:hover{transform:translateY(-1px);}
+.btn:active{transform:translateY(0);}
+.btn-primary{background:var(--ink);color:var(--paper);}
+.btn-primary:hover{background:#000;}
+.btn-accent{background:var(--accent);color:#fff;}
+.btn-accent:hover{background:var(--accent-deep);}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--rule);}
+.btn-ghost:hover{background:var(--paper-warm);}
+.btn-text{background:transparent;padding:4px 0;border-radius:0;color:var(--ink);border-bottom:1px solid var(--ink);}
+.btn-lg{padding:14px 24px;font-size:15px;}
+.btn-sm{padding:7px 14px;font-size:13px;}
+
+.input{width:100%;background:var(--paper-card);border:1px solid var(--rule);border-radius:var(--r-md);padding:12px 14px;font-family:var(--sans);font-size:15px;color:var(--ink);transition:border .15s ease,box-shadow .15s ease;}
+.input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(26,26,26,0.06);}
+.input::placeholder{color:var(--ink-4);}
+.input-lg{padding:16px 18px;font-size:16px;}
+.label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--ink-3);margin-bottom:6px;display:block;}
+
+.card{background:var(--paper-card);border:1px solid var(--rule-soft);border-radius:var(--r-lg);}
+.card-muted{background:var(--paper-warm);border:1px solid var(--rule-soft);border-radius:var(--r-lg);}
+
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:var(--r-round);background:var(--paper-warm);border:1px solid var(--rule-soft);font-family:var(--mono);font-size:11px;color:var(--ink-2);letter-spacing:0.02em;line-height:1.5;}
+.pill-accent{background:var(--accent-wash);border-color:transparent;color:var(--accent-deep);}
+.pill-ink{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.pill-dot::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+.shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh;}
+.nav{background:var(--paper-warm);border-right:1px solid var(--rule);padding:var(--sp-6) var(--sp-5);position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;}
+.nav-brand{display:flex;align-items:baseline;gap:8px;margin-bottom:var(--sp-7);}
+.nav-brand .mark{font-family:var(--serif);font-size:28px;line-height:1;}
+.nav-section{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--ink-4);margin:var(--sp-5) 0 var(--sp-2);}
+.nav-item{display:flex;align-items:center;gap:10px;padding:7px 10px;margin:0 -10px;border-radius:var(--r-md);font-size:14px;color:var(--ink-2);cursor:pointer;transition:background .12s ease;line-height:1.2;border:none;background:transparent;width:calc(100% + 20px);text-align:left;}
+.nav-item:hover{background:var(--paper-sunk);}
+.nav-item.on{background:var(--paper-card);color:var(--ink);font-weight:500;box-shadow:var(--shadow-sm);}
+.nav-item .num{font-family:var(--mono);font-size:10px;color:var(--ink-4);min-width:18px;}
+.nav-item.on .num{color:var(--accent);}
+
+.row{display:flex;} .col{display:flex;flex-direction:column;}
+.g-1{gap:var(--sp-1);}.g-2{gap:var(--sp-2);}.g-3{gap:var(--sp-3);}.g-4{gap:var(--sp-4);}.g-5{gap:var(--sp-5);}.g-6{gap:var(--sp-6);}.g-7{gap:var(--sp-7);}
+.ai-c{align-items:center;}.ai-b{align-items:baseline;}.ai-s{align-items:flex-start;}
+.jc-b{justify-content:space-between;}.jc-c{justify-content:center;}
+.grow{flex:1;}.w-full{width:100%;}.center{text-align:center;}
+
+.meter{height:3px;background:var(--rule-soft);border-radius:2px;overflow:hidden;position:relative;}
+.meter>span{position:absolute;left:0;top:0;bottom:0;background:var(--ink);border-radius:2px;transition:width .5s ease;}
+.meter-accent>span{background:var(--accent);}
+
+.section-open{display:flex;align-items:baseline;gap:16px;margin-bottom:var(--sp-5);}
+.section-open::before{content:'';display:block;width:28px;height:1px;background:var(--ink);align-self:center;}
+.section-open .num{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:0.14em;}
+
+html{scroll-behavior:smooth;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+@keyframes blink{0%,100%{opacity:.3;}50%{opacity:1;}}
+</style>
+
+<!-- React + Babel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+/* ── Shared UI primitives ────────────────────────────────── */
+
+const Logo = ({ size = 28 }) => (
+  <div className="row ai-c g-2" style={{ flexShrink: 0 }}>
+    <span className="mono" style={{ fontSize: size * 0.5, color: 'var(--accent)' }}>※</span>
+    <span className="serif" style={{ fontSize: size, letterSpacing: '-0.02em', lineHeight: 1, whiteSpace: 'nowrap' }}>ChannelIQ</span>
+  </div>
+);
+
+const Eyebrow = ({ children, accent }) => (
+  <div className={`eyebrow${accent ? ' eyebrow-accent' : ''}`}>{children}</div>
+);
+
+const SectionOpen = ({ num, children }) => (
+  <div className="section-open">
+    <span className="num">{num}</span>
+    <span className="caption" style={{ textTransform: 'uppercase', letterSpacing: '0.14em' }}>{children}</span>
+  </div>
+);
+
+const Pill = ({ children, variant = 'default', dot }) => (
+  <span className={`pill${variant === 'accent' ? ' pill-accent' : variant === 'ink' ? ' pill-ink' : ''}${dot ? ' pill-dot' : ''}`}>{children}</span>
+);
+
+const Btn = ({ children, variant = 'primary', size, onClick, style, type = 'button' }) => (
+  <button type={type}
+    className={`btn${variant === 'accent' ? ' btn-accent' : variant === 'ghost' ? ' btn-ghost' : variant === 'text' ? ' btn-text' : ' btn-primary'}${size === 'lg' ? ' btn-lg' : size === 'sm' ? ' btn-sm' : ''}`}
+    onClick={onClick} style={style}>
+    {children}
+  </button>
+);
+
+const Input = ({ label, lg, ...props }) => (
+  <div style={{ width: '100%' }}>
+    {label && <label className="label">{label}</label>}
+    <input className={`input${lg ? ' input-lg' : ''}`} {...props} />
+  </div>
+);
+
+const Ornament = () => (
+  <div className="row ai-c jc-c g-2" style={{ color: 'var(--ink-3)', margin: '20px 0' }}>
+    <span style={{ width: 40, height: 1, background: 'currentColor', opacity: 0.5 }} />
+    <span className="serif" style={{ fontSize: 18 }}>❦</span>
+    <span style={{ width: 40, height: 1, background: 'currentColor', opacity: 0.5 }} />
+  </div>
+);
+
+const MiniLine = ({ data = [4,7,6,11,9,14,12,18,16,22,24], color = 'var(--accent)', h = 60, w = 200 }) => {
+  const max = Math.max(...data), min = Math.min(...data);
+  const step = w / (data.length - 1);
+  const pts = data.map((v, i) => [i * step, h - ((v - min) / (max - min || 1)) * (h - 4) - 2]);
+  const d = pts.map((p, i) => (i === 0 ? `M ${p[0]},${p[1]}` : `L ${p[0]},${p[1]}`)).join(' ');
+  return (
+    <svg width={w} height={h} style={{ display: 'block' }}>
+      <path d={d} fill="none" stroke={color} strokeWidth="1.5" />
+      {pts.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r="1.8" fill={color} opacity={i === pts.length - 1 ? 1 : 0.3} />)}
+    </svg>
+  );
+};
+
+const Avatar = ({ name, size = 32, color = 'var(--ink)' }) => (
+  <div className="row ai-c jc-c serif" style={{ width: size, height: size, borderRadius: '50%', background: color, color: 'var(--paper)', fontSize: size * 0.4, flexShrink: 0 }}>
+    {name.split(' ').map(s => s[0]).slice(0, 2).join('').toUpperCase()}
+  </div>
+);
+
+const ChannelMark = ({ name, size = 40, bg = '#C44536' }) => (
+  <div style={{ width: size, height: size, background: bg, borderRadius: size * 0.25, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: 'var(--serif)', fontSize: size * 0.5, flexShrink: 0 }}>
+    {(name[0] || '?').toUpperCase()}
+  </div>
+);
+
+/* ── Landing ──────────────────────────────────────────────── */
+
+const BenchmarkChart = () => {
+  const series = [
+    { name: 'You', data: [100,103,106,108,112,115,119,124,128,134,140], color: 'var(--accent)', w: 2 },
+    { name: 'Competitor A', data: [100,102,104,105,107,108,110,112,115,118,121], color: 'var(--ink-3)', w: 1 },
+    { name: 'Competitor B', data: [100,101,103,104,104,106,107,108,110,111,113], color: 'var(--ink-4)', w: 1 },
+    { name: 'Cohort median', data: [100,101,102,103,104,105,106,107,108,109,110], color: 'var(--brass)', w: 1 },
+  ];
+  const W = 560, H = 180;
+  const allVals = series.flatMap(s => s.data);
+  const max = Math.max(...allVals), min = Math.min(...allVals);
+  const toPath = data => data.map((v, i) => `${i ? 'L' : 'M'} ${(i * W / (data.length - 1)).toFixed(1)},${(H - ((v - min) / (max - min)) * (H - 10) - 5).toFixed(1)}`).join(' ');
+  return (
+    <div>
+      <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
+        {[0, .25, .5, .75, 1].map((t, i) => <line key={i} x1="0" x2={W} y1={t * H} y2={t * H} stroke="var(--rule-soft)" strokeDasharray="2 3" />)}
+        {series.map((s, i) => <path key={i} d={toPath(s.data)} fill="none" stroke={s.color} strokeWidth={s.w} strokeLinejoin="round" strokeLinecap="round" />)}
+      </svg>
+      <div className="row g-5" style={{ marginTop: 12, flexWrap: 'wrap' }}>
+        {series.map(s => <div key={s.name} className="row ai-c g-2"><span style={{ width: 14, height: 2, background: s.color }} /><span className="caption">{s.name}</span></div>)}
+      </div>
+    </div>
+  );
+};
+
+const FeaturedCard = () => (
+  <div className="card" style={{ padding: 28, boxShadow: 'var(--shadow-lg)' }}>
+    <div className="row ai-c jc-b">
+      <Eyebrow accent>Today's field report</Eyebrow>
+      <span className="caption">18 April · 06:00 IST</span>
+    </div>
+    <hr className="rule" style={{ margin: '12px 0 20px' }} />
+    <div className="serif" style={{ fontSize: 28, lineHeight: 1.1, marginBottom: 8 }}>
+      You're growing <span style={{ fontStyle: 'italic', color: 'var(--brass)' }}>1.4× faster</span> than the median in your cohort.
+    </div>
+    <div className="body-sm" style={{ marginBottom: 24 }}>
+      But three of your neighbours posted about <em style={{ fontStyle: 'italic', color: 'var(--brass)' }}>"SIP vs NPS"</em> this week. You haven't.
+    </div>
+    <div className="row ai-c jc-b" style={{ marginBottom: 8 }}>
+      <span className="caption">Subs · last 30d</span>
+      <span className="mono" style={{ fontSize: 12, color: 'var(--accent)' }}>+4,820 ▲</span>
+    </div>
+    <MiniLine w={420} h={80} data={[4,5,6,8,7,10,13,11,14,17,16,20,22,24]} />
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginTop: 24, paddingTop: 20, borderTop: '1px solid var(--rule)' }}>
+      {[['Outliers', '2', 'this week'], ['Unwritten topics', '14', 'in your niche'], ['Best posting day', 'Sat', '10 AM IST']].map(([l, v, s]) => (
+        <div key={l}>
+          <div className="caption">{l}</div>
+          <div className="serif" style={{ fontSize: 28, lineHeight: 1, margin: '4px 0' }}>{v}</div>
+          <div className="caption">{s}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const PlanCard = ({ name, price, period, tag, features, featured }) => (
+  <div className="card" style={{ padding: 32, border: featured ? '1px solid var(--ink)' : '1px solid var(--rule-soft)', position: 'relative' }}>
+    {featured && <div style={{ position: 'absolute', top: -12, left: 32 }}><Pill variant="ink">Most read</Pill></div>}
+    <div className="eyebrow">{tag}</div>
+    <div className="serif" style={{ fontSize: 28, marginTop: 6 }}>{name}</div>
+    <hr className="rule" style={{ margin: '16px 0' }} />
+    <div className="row ai-b g-2">
+      <span className="display" style={{ fontSize: 48 }}>{price}</span>
+      <span className="caption">{period}</span>
+    </div>
+    <div className="col g-2" style={{ marginTop: 24 }}>
+      {features.map(f => <div key={f} className="row ai-c g-2"><span style={{ fontFamily: 'var(--serif)', color: 'var(--accent)', fontSize: 14 }}>—</span><span className="body-sm">{f}</span></div>)}
+    </div>
+    <div style={{ marginTop: 32 }}>
+      <Btn variant={featured ? 'primary' : 'ghost'} style={{ width: '100%', justifyContent: 'center' }}>Choose {name}</Btn>
+    </div>
+  </div>
+);
+
+const Landing = () => {
+  const [channelUrl, setChannelUrl] = React.useState('');
+  return (
+    <div style={{ background: 'var(--paper)', minHeight: '100vh' }}>
+      {/* Masthead */}
+      <div style={{ borderBottom: '1px solid var(--rule)', padding: '18px 64px' }}>
+        <div className="row ai-c jc-b" style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <Logo />
+          <div className="row ai-c g-6">
+            {['Method', 'Stories', 'Pricing', 'Sign in'].map(t => <a key={t} className="body-sm" style={{ color: 'var(--ink-2)' }}>{t}</a>)}
+            <Btn variant="primary" size="sm">Begin</Btn>
+          </div>
+        </div>
+      </div>
+
+      {/* Hero */}
+      <section style={{ padding: '96px 64px 64px', maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 64, alignItems: 'start' }}>
+          <div>
+            <Eyebrow accent>A quieter way to grow · Issue 001</Eyebrow>
+            <h1 className="display" style={{ fontSize: 92, margin: '16px 0 24px' }}>
+              Stop <span style={{ fontStyle: 'italic', color: 'var(--accent)' }}>guessing,</span><br/>
+              what to <span style={{ fontStyle: 'italic', color: 'var(--brass)' }}>post.</span>
+            </h1>
+            <p className="body-lg" style={{ maxWidth: 480, marginTop: 28 }}>
+              ChannelIQ learns about your channel and your competitors' the way a good editor reads a newspaper —
+              looking for what's missing, what's working, and what to write next.
+            </p>
+            <div style={{ marginTop: 40 }}>
+              <label className="label">Paste your channel to preview</label>
+              <div className="row g-2" style={{ maxWidth: 520 }}>
+                <Input placeholder="youtube.com/@yourchannel" value={channelUrl} onChange={e => setChannelUrl(e.target.value)} lg />
+                <Btn variant="accent" size="lg" style={{ whiteSpace: 'nowrap' }}>Begin →</Btn>
+              </div>
+              <div className="caption" style={{ marginTop: 12 }}>Free to try · 7-day read · No card until you've seen the dashboard</div>
+            </div>
+          </div>
+          <FeaturedCard />
+        </div>
+
+        {/* Contents */}
+        <div style={{ marginTop: 96, paddingTop: 24, borderTop: '1px solid var(--rule)' }}>
+          <div className="row ai-b jc-b g-7">
+            <div>
+              <div className="eyebrow">In this issue</div>
+              <div className="serif" style={{ fontSize: 22, marginTop: 8 }}>What's inside the dashboard</div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 40, flex: 1, maxWidth: 780 }}>
+              {[['01','Benchmark','You vs your neighbourhood'],['02','Outliers','Videos that broke the pattern'],['03','Atlas','Unwritten topics in your niche'],['04','Timing','When your audience shows up']].map(([n,t,d]) => (
+                <div key={n}>
+                  <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em' }}>{n}</div>
+                  <div className="serif" style={{ fontSize: 20, marginTop: 6 }}>{t}</div>
+                  <div className="body-sm" style={{ marginTop: 4 }}>{d}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Ornament />
+
+      {/* How it works */}
+      <section style={{ padding: '64px 64px 96px', maxWidth: 1200, margin: '0 auto' }}>
+        <SectionOpen num="§ 01">The method</SectionOpen>
+        <h2 className="display" style={{ fontSize: 56, maxWidth: 720, margin: '8px 0 48px' }}>
+          Three inputs. One honest look at the field you're playing on.
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 48 }}>
+          {[
+            { num: 'I.', title: 'Connect your channel', body: "A read-only handshake with YouTube. We fetch the last two years of your uploads, views, retention, and comments — nothing we can't find ourselves.", note: 'Takes about forty seconds.' },
+            { num: 'II.', title: 'Name your neighbours', body: "Three to ten channels that orbit yours. Direct competitors, aspirational ones, or the one creator whose numbers keep you up at night.", note: 'We suggest ten based on your content.' },
+            { num: 'III.', title: 'Read the dashboard', body: "A quiet room where your channel and theirs are laid side by side — plotted, compared, and annotated. Refreshed every morning at six.", note: 'First edition prints in four minutes.' },
+          ].map((s, i) => (
+            <article key={i}>
+              <div className="serif" style={{ fontSize: 48, color: 'var(--accent)', lineHeight: 1, marginBottom: 16 }}>{s.num}</div>
+              <h3 className="serif" style={{ fontSize: 26, margin: '0 0 12px' }}>{s.title}</h3>
+              <p className="body" style={{ margin: 0 }}>{s.body}</p>
+              <hr className="rule-dashed" />
+              <div className="marginalia">{s.note}</div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section style={{ padding: '96px 64px', maxWidth: 1200, margin: '0 auto' }}>
+        <SectionOpen num="§ 04">Subscription</SectionOpen>
+        <div className="row ai-b jc-b" style={{ marginBottom: 48 }}>
+          <h2 className="display" style={{ fontSize: 56, margin: 0 }}>One price. Cancel whenever.</h2>
+          <div className="marginalia" style={{ maxWidth: 280, textAlign: 'right' }}>No tiers, no upsells, no "contact sales."<br/>Try it first, pay only if the dashboard earns its keep.</div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
+          <PlanCard name="Quarterly" price="₹2,400" period="per quarter" tag="for the curious" features={['1 channel','Up to 10 competitors','Daily refresh','Email the dashboard']} />
+          <PlanCard name="Annual" price="₹7,200" period="per year" tag="for the committed" features={['1 channel','Up to 10 competitors','Daily refresh','Script atlas','Two months free']} featured />
+          <PlanCard name="Studio" price="₹24,000" period="per year" tag="for agencies" features={['Up to 5 channels','Unlimited competitors','Shared workspace','Weekly print edition']} />
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{ borderTop: '1px solid var(--rule)', padding: '48px 64px', background: 'var(--paper-warm)' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div className="row ai-b jc-b">
+            <Logo />
+            <div className="caption">© 2026 ChannelIQ Editorial Pvt. Ltd. · Mumbai</div>
+          </div>
+          <div style={{ marginTop: 40, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 48 }}>
+            {[['Product',['Method','Dashboard','Pricing','Changelog']],['Reading',['The field guide','Case studies','Glossary','Sample edition']],['Company',['About','Writing','Hiring','Contact']],['Fine print',['Terms','Privacy','Refunds','Data handling']]].map(([h, items]) => (
+              <div key={h}>
+                <div className="eyebrow" style={{ marginBottom: 12 }}>{h}</div>
+                <div className="col g-2">{items.map(i => <a key={i} className="body-sm">{i}</a>)}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+/* ── Sign up / Sign in ────────────────────────────────────── */
+
+const GoogleMark = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24">
+    <path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v4h5.9c-.3 1.4-1 2.5-2.2 3.3v2.7h3.5c2-1.9 3.3-4.7 3.3-8z"/>
+    <path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.7c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.3-2-6.2-4.6H2.2v2.8A11 11 0 0 0 12 23z"/>
+    <path fill="#FBBC04" d="M5.8 14.1c-.2-.7-.4-1.4-.4-2.1s.1-1.4.4-2.1V7.1H2.2a11 11 0 0 0 0 9.8l3.6-2.8z"/>
+    <path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.6l3.1-3.1A11 11 0 0 0 12 1 11 11 0 0 0 2.2 7.1l3.6 2.8C6.7 7.4 9.1 5.4 12 5.4z"/>
+  </svg>
+);
+
+const Signup = ({ onComplete }) => {
+  const [tab, setTab] = React.useState('signup');
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--paper)' }}>
+      <div style={{ borderBottom: '1px solid var(--rule)', padding: '18px 48px' }}>
+        <div className="row ai-c jc-b" style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <Logo />
+          <div className="caption">A quieter way to grow on YouTube</div>
+        </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 'calc(100vh - 60px)' }}>
+        {/* Left */}
+        <div style={{ padding: '96px 64px', background: 'var(--paper-warm)', borderRight: '1px solid var(--rule)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div>
+            <Eyebrow accent>On joining the almanac</Eyebrow>
+            <h1 className="display" style={{ fontSize: 64, margin: '16px 0 32px', maxWidth: 480 }}>
+              Begin with your <span style={{ fontStyle: 'italic', color: 'var(--brass)' }}>name.</span><br/>
+              We'll ask for the rest <span style={{ fontStyle: 'italic', color: 'var(--brass)' }}>after.</span>
+            </h1>
+            <p className="body-lg" style={{ maxWidth: 440 }}>
+              First, let us know who you are. Next, we'll help you set up your channel, pick your neighbours, and generate your dashboard. Only then — if you like what you see — we'll ask for payment.
+            </p>
+            <hr className="rule" style={{ margin: '48px 0', maxWidth: 440 }} />
+            <div style={{ maxWidth: 440 }}>
+              <div className="eyebrow">The four steps</div>
+              <div className="col g-3" style={{ marginTop: 16 }}>
+                {[['01','Create an account','You are here'],['02','Connect your YouTube','40 seconds'],['03','Name your competitors','2 minutes'],['04','Read your dashboard','4 minutes to generate']].map(([n,t,s],i) => (
+                  <div key={n} className="row ai-b g-3">
+                    <span className="mono" style={{ fontSize: 11, color: i===0?'var(--accent)':'var(--ink-4)', minWidth: 24 }}>{n}</span>
+                    <div>
+                      <div className="serif" style={{ fontSize: 18, color: i===0?'var(--ink)':'var(--ink-3)' }}>{t}</div>
+                      <div className="caption">{s}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <figure style={{ margin: 0, maxWidth: 440 }}>
+            <div className="serif" style={{ fontSize: 40, color: 'var(--accent)', lineHeight: 1 }}>"</div>
+            <blockquote className="serif" style={{ fontSize: 22, lineHeight: 1.35, margin: '0 0 16px', fontStyle: 'italic' }}>
+              Four days in, ChannelIQ pointed at a topic I'd never have written. It became my most-watched video of the year.
+            </blockquote>
+            <figcaption className="row ai-c g-3">
+              <Avatar name="Aditya Kulkarni" size={32} />
+              <div><div className="serif" style={{ fontSize: 14 }}>Aditya Kulkarni</div><div className="caption">Cinema essays · 412K subs</div></div>
+            </figcaption>
+          </figure>
+        </div>
+
+        {/* Right */}
+        <div style={{ padding: '96px 64px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{ maxWidth: 420, width: '100%' }}>
+            <div className="row g-4" style={{ marginBottom: 32, borderBottom: '1px solid var(--rule)' }}>
+              {[['signup','Create account'],['signin','Sign in']].map(([k,l]) => (
+                <button key={k} onClick={() => setTab(k)} style={{ background:'transparent',border:'none',padding:'10px 0',fontFamily:'var(--sans)',fontSize:14,color:tab===k?'var(--ink)':'var(--ink-3)',fontWeight:tab===k?500:400,cursor:'pointer',borderBottom:tab===k?'2px solid var(--accent)':'2px solid transparent',marginBottom:-1 }}>{l}</button>
+              ))}
+            </div>
+            <SectionOpen num="Step 01 of 04">Create your account</SectionOpen>
+            <h2 className="display" style={{ fontSize: 40, margin: '4px 0 32px' }}>{tab==='signup' ? "Let's begin." : 'Welcome back.'}</h2>
+            <Btn variant="ghost" style={{ justifyContent: 'center', width: '100%', padding: '14px' }}>
+              <GoogleMark /> Continue with Google
+            </Btn>
+            <div className="row ai-c g-3" style={{ margin: '24px 0' }}>
+              <div style={{ flex:1, height:1, background:'var(--rule)' }} />
+              <span className="caption">or with email</span>
+              <div style={{ flex:1, height:1, background:'var(--rule)' }} />
+            </div>
+            <form className="col g-4" onSubmit={e => { e.preventDefault(); onComplete && onComplete(); }}>
+              {tab==='signup' && <Input label="Your name" placeholder="Ishita Rao" />}
+              <Input label="Email" type="email" placeholder="you@channel.com" />
+              <Input label="Password" type="password" placeholder="At least 8 characters" />
+              <Btn variant="accent" size="lg" type="submit" style={{ justifyContent:'center', width:'100%', marginTop:8 }}>
+                {tab==='signup' ? 'Create account & continue →' : 'Sign in →'}
+              </Btn>
+            </form>
+            <div className="caption" style={{ marginTop: 24, lineHeight: 1.6 }}>
+              {tab==='signup'
+                ? <>By creating an account you agree to our <a style={{ color:'var(--ink-2)',borderBottom:'1px solid var(--rule)' }}>Terms</a> and <a style={{ color:'var(--ink-2)',borderBottom:'1px solid var(--rule)' }}>Privacy notice</a>. No payment required until your dashboard is ready.</>
+                : <>New to ChannelIQ? <a onClick={() => setTab('signup')} style={{ color:'var(--accent)',cursor:'pointer',borderBottom:'1px solid var(--accent)' }}>Create an account</a> — it's free to try.</>}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── Onboarding shell ─────────────────────────────────────── */
+
+const OnboardingShell = ({ step, children, maxWidth = 720 }) => {
+  const steps = [{ n:'02', t:'Connect channel' },{ n:'03', t:'Competitors' },{ n:'04', t:'Generating' },{ n:'05', t:'Unlock' }];
+  return (
+    <div style={{ minHeight:'100vh', background:'var(--paper)', display:'flex', flexDirection:'column' }}>
+      <div style={{ borderBottom:'1px solid var(--rule)', padding:'18px 48px' }}>
+        <div className="row ai-c jc-b" style={{ maxWidth:1200, margin:'0 auto' }}>
+          <Logo />
+          <div className="row ai-c g-4">
+            <span className="caption">Signed in as ishita@rao.co</span>
+            <a className="body-sm" style={{ color:'var(--ink-3)' }}>Save & continue later</a>
+          </div>
+        </div>
+      </div>
+      <div style={{ borderBottom:'1px solid var(--rule)', padding:'18px 48px', background:'var(--paper-warm)' }}>
+        <div style={{ maxWidth:1200, margin:'0 auto' }}>
+          <div className="row ai-c g-3">
+            {steps.map((s,i) => {
+              const state = i<step?'done':i===step?'on':'todo';
+              return (
+                <React.Fragment key={s.n}>
+                  <div className="row ai-c g-2" style={{ opacity: state==='todo'?.5:1 }}>
+                    <span className="mono" style={{ fontSize:10, letterSpacing:'0.14em', color:state==='on'?'var(--accent)':state==='done'?'var(--ink)':'var(--ink-4)' }}>
+                      {state==='done'?'✓':s.n}
+                    </span>
+                    <span className="serif" style={{ fontSize:15, color:state==='on'?'var(--ink)':state==='done'?'var(--ink-2)':'var(--ink-3)', fontStyle:state==='on'?'italic':'normal' }}>{s.t}</span>
+                  </div>
+                  {i<steps.length-1 && <div style={{ flex:'0 0 40px', height:1, background:i<step?'var(--ink)':'var(--rule)' }} />}
+                </React.Fragment>
+              );
+            })}
+            <div className="grow" />
+            <span className="caption">Step {steps[step].n} of 05</span>
+          </div>
+        </div>
+      </div>
+      <div style={{ flex:1, padding:'64px 48px', display:'flex', justifyContent:'center' }}>
+        <div style={{ maxWidth, width:'100%' }}>{children}</div>
+      </div>
+    </div>
+  );
+};
+
+/* ── Onboard: Connect ─────────────────────────────────────── */
+
+const OnboardConnect = ({ onNext }) => {
+  const [status, setStatus] = React.useState('idle');
+  const [url, setUrl] = React.useState('');
+  const simulate = () => { setStatus('fetching'); setTimeout(() => setStatus('found'), 1600); };
+  const found = { name:'Ishita Rao', handle:'@ishita-finance', subs:'184K', videos:'142', niche:'Personal Finance · Hindi / English', avg:'42K' };
+
+  return (
+    <>
+      <SectionOpen num="Chapter II">Connect your channel</SectionOpen>
+      <h1 className="display" style={{ fontSize:56, margin:'8px 0 20px' }}>
+        Let's find <span style={{ fontStyle:'italic', color:'var(--accent)' }}>your</span> channel first.
+      </h1>
+      <p className="body-lg" style={{ maxWidth:560, marginBottom:48 }}>
+        Paste your YouTube URL or handle, then give ChannelIQ a read-only handshake with YouTube. We'll pull the last two years of your content so the dashboard has something real to say.
+      </p>
+
+      {status !== 'found' && (
+        <div className="card" style={{ padding:40 }}>
+          <label className="label">Your channel URL or handle</label>
+          <div className="row g-3" style={{ alignItems:'stretch' }}>
+            <Input value={url} onChange={e => setUrl(e.target.value)} placeholder="youtube.com/@yourchannel  or  @yourchannel" lg style={{ fontFamily:'var(--mono)', fontSize:15 }} />
+            <Btn variant="primary" size="lg" onClick={simulate} style={{ whiteSpace:'nowrap' }}>
+              {status==='fetching'?'Reading…':'Find channel'}
+            </Btn>
+          </div>
+          <div className="row ai-c g-2" style={{ marginTop:16 }}>
+            <span className="caption">Try</span>
+            {['@warikoo','@pranjalkamra','@labourlawadvisor'].map(h => (
+              <button key={h} onClick={() => setUrl(h)} style={{ background:'transparent', border:'1px solid var(--rule)', padding:'3px 10px', borderRadius:999, fontFamily:'var(--mono)', fontSize:11, color:'var(--ink-2)', cursor:'pointer' }}>{h}</button>
+            ))}
+          </div>
+          {status==='fetching' && (
+            <div style={{ marginTop:32 }}>
+              <div className="meter meter-accent"><span style={{ width:'60%', animation:'pulse 1.5s ease infinite' }} /></div>
+              <div className="caption" style={{ marginTop:10 }}>Looking up channel · verifying handle · reading metadata…</div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {status==='found' && (
+        <>
+          <div className="card" style={{ padding:40 }}>
+            <div className="row ai-c g-4">
+              <ChannelMark name={found.name} size={64} bg="var(--accent)" />
+              <div style={{ flex:1 }}>
+                <Eyebrow>We found</Eyebrow>
+                <div className="serif" style={{ fontSize:28, marginTop:2 }}>{found.name}</div>
+                <div className="caption">{found.handle} · {found.niche}</div>
+              </div>
+              <button onClick={() => { setStatus('idle'); setUrl(''); }} style={{ background:'transparent', border:'none', borderBottom:'1px solid var(--ink-3)', cursor:'pointer', padding:'4px 0', fontFamily:'var(--sans)', fontSize:13, color:'var(--ink-2)' }}>Not this one</button>
+            </div>
+            <hr className="rule" />
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:32 }}>
+              {[['Subscribers',found.subs],['Videos',found.videos],['Avg. views',found.avg]].map(([l,v]) => (
+                <div key={l}><div className="caption">{l}</div><div className="display" style={{ fontSize:36, marginTop:4 }}>{v}</div></div>
+              ))}
+            </div>
+          </div>
+          <div className="row ai-c jc-b" style={{ marginTop:32 }}>
+            <div className="marginalia">Looks good. Let's add your competitors next.</div>
+            <Btn variant="accent" size="lg" onClick={onNext}>Continue →</Btn>
+          </div>
+        </>
+      )}
+    </>
+  );
+};
+
+/* ── Onboard: Competitors ─────────────────────────────────── */
+
+const SUGGESTED = [
+  { name:'Warikoo', handle:'@warikoo', subs:'4.2M', bg:'#C44536' },
+  { name:'Pranjal Kamra', handle:'@pranjalkamra', subs:'6.1M', bg:'#4A6B52' },
+  { name:'Labour Law Advisor', handle:'@labourlawadvisor', subs:'5.8M', bg:'#8B6A3A' },
+  { name:'CA Rachana', handle:'@carachanaranade', subs:'4.9M', bg:'#2A5A7A' },
+  { name:'Asset Yogi', handle:'@assetyogi', subs:'4.0M', bg:'#6B3A5A' },
+  { name:'Shashank Udupa', handle:'@shashankudupa', subs:'560K', bg:'#3A3A36' },
+  { name:'Think School', handle:'@thinkschool', subs:'3.8M', bg:'#A03828' },
+  { name:'Neeraj Arora', handle:'@neerajarora', subs:'1.2M', bg:'#5A4A3A' },
+];
+
+const OnboardCompetitors = ({ onNext, onBack }) => {
+  const [added, setAdded] = React.useState([SUGGESTED[0], SUGGESTED[1], SUGGESTED[2]]);
+  const [input, setInput] = React.useState('');
+
+  const add = c => { if (added.find(a=>a.handle===c.handle)||added.length>=10) return; setAdded([...added,c]); };
+  const remove = h => setAdded(added.filter(a=>a.handle!==h));
+  const addFromInput = () => {
+    if (!input.trim()) return;
+    const handle = input.startsWith('@')?input:'@'+input.replace(/.*\//,'');
+    add({ name:handle.replace('@',''), handle, subs:'—', bg:'var(--brass)' });
+    setInput('');
+  };
+
+  return (
+    <>
+      <SectionOpen num="Chapter III">Name your neighbours</SectionOpen>
+      <div className="row ai-b jc-b" style={{ marginBottom:12 }}>
+        <h1 className="display" style={{ fontSize:56, margin:0, maxWidth:600 }}>
+          Who's in <span style={{ fontStyle:'italic', color:'var(--accent)' }}>your</span> neighbourhood?
+        </h1>
+        <div className="marginalia" style={{ maxWidth:260, textAlign:'right' }}>Pick between three and ten. More is not better — better is better.</div>
+      </div>
+      <p className="body-lg" style={{ maxWidth:600, marginBottom:40 }}>
+        These are the channels we'll compare yours against — in growth rate, posting cadence, topics, and outliers. Mix direct competitors, aspirational channels, and one wild card.
+      </p>
+      <div style={{ display:'grid', gridTemplateColumns:'1.1fr 1fr', gap:40 }}>
+        <div>
+          <div className="card" style={{ padding:24 }}>
+            <label className="label">Add by URL or handle</label>
+            <div className="row g-2">
+              <Input value={input} onChange={e=>setInput(e.target.value)} placeholder="youtube.com/@channel  or  @channel" onKeyDown={e=>e.key==='Enter'&&addFromInput()} style={{ fontFamily:'var(--mono)', fontSize:14 }} />
+              <Btn variant="primary" onClick={addFromInput}>Add</Btn>
+            </div>
+            <div className="caption" style={{ marginTop:10 }}>Or paste a list separated by commas or new lines.</div>
+          </div>
+          <div style={{ marginTop:32 }}>
+            <div className="row ai-b jc-b" style={{ marginBottom:12 }}>
+              <Eyebrow>§ Your neighbourhood ({added.length}/10)</Eyebrow>
+              {added.length>=3 && <Pill variant="accent" dot>Ready to continue</Pill>}
+            </div>
+            <div className="col">
+              {added.length===0 && (
+                <div className="card-muted" style={{ padding:32, textAlign:'center' }}>
+                  <div className="serif" style={{ fontSize:18, fontStyle:'italic', color:'var(--ink-3)' }}>No neighbours yet.</div>
+                  <div className="caption" style={{ marginTop:6 }}>Add at least three to continue.</div>
+                </div>
+              )}
+              {added.map((c,i) => (
+                <div key={c.handle} className="row ai-c g-3" style={{ padding:'14px 4px', borderTop:'1px solid var(--rule)', borderBottom:i===added.length-1?'1px solid var(--rule)':'none' }}>
+                  <span className="mono" style={{ fontSize:11, color:'var(--ink-4)', width:22 }}>{String(i+1).padStart(2,'0')}</span>
+                  <ChannelMark name={c.name} size={36} bg={c.bg} />
+                  <div style={{ flex:1 }}>
+                    <div className="serif" style={{ fontSize:16 }}>{c.name}</div>
+                    <div className="caption">{c.handle} · {c.subs} subs</div>
+                  </div>
+                  <button onClick={()=>remove(c.handle)} style={{ background:'transparent', border:'none', color:'var(--ink-3)', cursor:'pointer', fontFamily:'var(--serif)', fontSize:20, lineHeight:1 }}>×</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className="card-muted" style={{ padding:24 }}>
+            <Eyebrow accent>§ Suggested by ChannelIQ</Eyebrow>
+            <div className="body-sm" style={{ marginTop:6, marginBottom:20 }}>Based on your channel topic & language. Tap to add.</div>
+            <div className="col">
+              {SUGGESTED.map((c,i) => {
+                const isAdded = !!added.find(a=>a.handle===c.handle);
+                return (
+                  <button key={c.handle} onClick={()=>isAdded?remove(c.handle):add(c)} style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 4px', borderTop:'1px solid var(--rule)', borderBottom:i===SUGGESTED.length-1?'1px solid var(--rule)':'none', background:'transparent', border:'none', width:'100%', textAlign:'left', cursor:'pointer', borderTopWidth:1 }}>
+                    <ChannelMark name={c.name} size={32} bg={c.bg} />
+                    <div style={{ flex:1 }}>
+                      <div className="serif" style={{ fontSize:15 }}>{c.name}</div>
+                      <div className="caption">{c.handle} · {c.subs}</div>
+                    </div>
+                    <span className="mono" style={{ fontSize:11, color:isAdded?'var(--accent)':'var(--ink-3)' }}>{isAdded?'✓ added':'+ add'}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr className="rule" style={{ margin:'48px 0 32px' }} />
+      <div className="row ai-c jc-b">
+        <Btn variant="ghost" onClick={onBack}>← Back</Btn>
+        <div className="row ai-c g-4">
+          <div className="marginalia">{added.length<3?`Add ${3-added.length} more to continue`:'Looks good.'}</div>
+          <Btn variant="accent" size="lg" onClick={onNext} style={{ opacity:added.length<3?.4:1, pointerEvents:added.length<3?'none':'auto' }}>Generate dashboard →</Btn>
+        </div>
+      </div>
+    </>
+  );
+};
+
+/* ── Onboard: Generating ──────────────────────────────────── */
+
+const TASKS = [
+  { id:'inventory', title:'Taking inventory', detail:'Reading your last 142 uploads', duration:2000 },
+  { id:'neighbours', title:'Measuring the neighbourhood', detail:'Benchmarking against 3 channels', duration:2200 },
+  { id:'outliers', title:'Spotting outliers', detail:'Finding videos that broke the pattern', duration:2400 },
+  { id:'timing', title:'Reading the clock', detail:'Learning when your audience shows up', duration:1800 },
+  { id:'atlas', title:'Drawing the topic atlas', detail:"Mapping what you've covered vs. theirs", duration:3000 },
+  { id:'gaps', title:'Finding unwritten topics', detail:'Demand vs. supply analysis', duration:2600 },
+  { id:'script', title:'Stocking the script lab', detail:'Generating 6 research-backed ideas', duration:3200 },
+];
+
+const CircularMeter = ({ value, done }) => {
+  const r = 50, c = 2 * Math.PI * r;
+  return (
+    <div style={{ position:'relative', width:140, height:140 }}>
+      <svg width="140" height="140" viewBox="0 0 140 140" style={{ transform:'rotate(-90deg)' }}>
+        <circle cx="70" cy="70" r={r} fill="none" stroke="var(--rule)" strokeWidth="2" />
+        <circle cx="70" cy="70" r={r} fill="none" stroke="var(--accent)" strokeWidth="2" strokeDasharray={c} strokeDashoffset={c*(1-value)} strokeLinecap="round" style={{ transition:'stroke-dashoffset .3s linear' }} />
+      </svg>
+      <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column' }}>
+        <div className="display" style={{ fontSize:32, lineHeight:1 }}>{Math.round(value*100)}<span style={{ fontSize:18, color:'var(--ink-3)' }}>%</span></div>
+        <div className="caption" style={{ marginTop:4 }}>{done?'ready':'printing…'}</div>
+      </div>
+    </div>
+  );
+};
+
+const OnboardGenerating = ({ onNext, onBack }) => {
+  const [progress, setProgress] = React.useState({});
+  const [done, setDone] = React.useState(new Set());
+
+  React.useEffect(() => {
+    const timers = [];
+    let startDelay = 0;
+    TASKS.forEach(t => {
+      const start = startDelay;
+      startDelay += 400;
+      const steps = 40, interval = t.duration / steps;
+      for (let s=1; s<=steps; s++) {
+        timers.push(setTimeout(() => {
+          setProgress(p => ({ ...p, [t.id]: s/steps }));
+          if (s===steps) setDone(d => new Set([...d, t.id]));
+        }, start + s*interval));
+      }
+    });
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  const allDone = done.size === TASKS.length;
+  const overall = Math.min(1, Object.values(progress).reduce((a,b)=>a+b,0) / TASKS.length);
+
+  return (
+    <div style={{ maxWidth:1100, margin:'0 auto', width:'100%' }}>
+      <div className="row ai-b jc-b" style={{ marginBottom:32 }}>
+        <div>
+          <SectionOpen num="Chapter IV">Printing your edition</SectionOpen>
+          <h1 className="display" style={{ fontSize:56, margin:'8px 0 12px' }}>
+            {allDone
+              ? <>Your dashboard is <span style={{ fontStyle:'italic', color:'var(--accent)' }}>ready.</span></>
+              : <>We're <span style={{ fontStyle:'italic', color:'var(--accent)' }}>reading</span> your channel now.</>}
+          </h1>
+          <p className="body-lg" style={{ maxWidth:560, margin:0 }}>
+            {allDone ? 'Take a peek below. The full dashboard unlocks after you pick a plan.' : "This takes about four minutes. Leave the tab open or we'll email you when it's ready."}
+          </p>
+        </div>
+        <CircularMeter value={overall} done={allDone} />
+      </div>
+
+      <div style={{ maxWidth:560, margin:'24px auto 0' }}>
+        <Eyebrow>§ Printing progress</Eyebrow>
+        <hr className="rule" style={{ margin:'12px 0 16px' }} />
+        <div className="col g-3">
+          {TASKS.map(t => {
+            const p = progress[t.id]||0;
+            const isDone = done.has(t.id);
+            const isOn = p>0 && !isDone;
+            return (
+              <div key={t.id} style={{ opacity:p===0?.45:1, transition:'opacity .3s' }}>
+                <div className="row ai-c jc-b">
+                  <div className="row ai-c g-2">
+                    <span className="mono" style={{ fontSize:11, minWidth:14, color:isDone?'var(--accent)':isOn?'var(--ink)':'var(--ink-4)' }}>
+                      {isDone?'✓':isOn?'◐':'○'}
+                    </span>
+                    <span className="serif" style={{ fontSize:16, fontStyle:isOn?'italic':'normal', color:isDone?'var(--ink-2)':'var(--ink)' }}>{t.title}</span>
+                  </div>
+                  <span className="caption" style={{ color:isDone?'var(--accent)':'var(--ink-3)' }}>
+                    {isDone?'done':isOn?`${Math.round(p*100)}%`:'queued'}
+                  </span>
+                </div>
+                <div className="body-sm" style={{ marginTop:4, marginLeft:22 }}>{t.detail}</div>
+                <div className="meter meter-accent" style={{ marginTop:8, marginLeft:22 }}>
+                  <span style={{ width:`${p*100}%` }} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <hr className="rule" style={{ margin:'24px 0' }} />
+        <div className="marginalia">You can close this tab. We'll email ishita@rao.co the moment your dashboard is ready to read.</div>
+      </div>
+
+      <hr className="rule" style={{ margin:'48px 0 24px' }} />
+      <div className="row ai-c jc-b">
+        <Btn variant="ghost" onClick={onBack}>← Back</Btn>
+        <div className="row ai-c g-4">
+          <div className="marginalia">{allDone?'Pick a plan to unlock the full dashboard →':`${done.size} of ${TASKS.length} sections printed`}</div>
+          <Btn variant="accent" size="lg" onClick={onNext} style={{ opacity:allDone?1:.4, pointerEvents:allDone?'auto':'none' }}>Continue to unlock →</Btn>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── Onboard: Paywall ─────────────────────────────────────── */
+
+const OnboardPaywall = ({ onBack, onDone }) => {
+  const [plan, setPlan] = React.useState('annual');
+  const plans = {
+    quarterly: { price:'₹2,400', period:'per quarter', savings:null, monthly:'₹800/mo' },
+    annual: { price:'₹7,200', period:'per year', savings:'Save ₹2,400 · 2 months free', monthly:'₹600/mo' },
+    studio: { price:'₹24,000', period:'per year', savings:'For teams & agencies', monthly:'₹2,000/mo' },
+  };
+
+  return (
+    <div style={{ maxWidth:1100, margin:'0 auto', width:'100%' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:64, alignItems:'start' }}>
+        <div>
+          <SectionOpen num="Chapter V">Unlock your edition</SectionOpen>
+          <h1 className="display" style={{ fontSize:52, margin:'8px 0 20px' }}>
+            Your dashboard is <span style={{ fontStyle:'italic', color:'var(--accent)' }}>printed.</span><br/>Here's what's inside.
+          </h1>
+          <p className="body-lg" style={{ maxWidth:480, marginBottom:32 }}>
+            We've read your channel, measured three neighbours, and drafted six script ideas — all from public data and your read-only handshake. Pick a plan to open the doors.
+          </p>
+          <div className="card" style={{ padding:28 }}>
+            <Eyebrow>§ In your edition</Eyebrow>
+            <div className="col" style={{ marginTop:12 }}>
+              {[
+                ['Your channel snapshot','184K subs · 142 videos · 2 years of history'],
+                ['Benchmark spread','You vs 3 competitors · cohort median'],
+                ['Outliers & patterns','2 breakthrough videos in your neighbourhood'],
+                ['Topic atlas','128 topics mapped · 14 unwritten in your niche'],
+                ['Timing heatmap','Best day & hour to post, per weekday'],
+                ['Script lab','6 research-backed video ideas, ready to film'],
+              ].map(([t,d],i) => (
+                <div key={t} className="row ai-s g-3" style={{ padding:'14px 0', borderTop:i?'1px dashed var(--rule)':'none' }}>
+                  <span className="mono" style={{ fontSize:10, color:'var(--accent)', marginTop:4, letterSpacing:'0.12em' }}>0{i+1}</span>
+                  <div><div className="serif" style={{ fontSize:16 }}>{t}</div><div className="caption" style={{ marginTop:2 }}>{d}</div></div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <figure style={{ margin:'40px 0 0', maxWidth:480 }}>
+            <div className="serif" style={{ fontSize:32, color:'var(--accent)', lineHeight:1 }}>"</div>
+            <blockquote className="serif" style={{ fontSize:20, lineHeight:1.4, margin:'0 0 12px', fontStyle:'italic' }}>The dashboard paid for itself the week I saw it.</blockquote>
+            <figcaption className="row ai-c g-3">
+              <Avatar name="Rahul Desai" size={28} />
+              <div className="caption">Rahul Desai · Tech reviews · 1.2M subs</div>
+            </figcaption>
+          </figure>
+        </div>
+
+        <div style={{ position:'sticky', top:24 }}>
+          <div className="card" style={{ padding:32 }}>
+            <Eyebrow accent>§ Choose a plan</Eyebrow>
+            <div className="col g-2" style={{ marginTop:16 }}>
+              {[['quarterly','Quarterly','for the curious',false],['annual','Annual','for the committed',true],['studio','Studio','for agencies',false]].map(([k,name,tag,rec]) => {
+                const on = plan===k, p = plans[k];
+                return (
+                  <button key={k} onClick={()=>setPlan(k)} style={{ background:on?'var(--paper-warm)':'transparent', border:on?'1px solid var(--ink)':'1px solid var(--rule)', borderRadius:8, padding:'14px 16px', textAlign:'left', cursor:'pointer', fontFamily:'inherit', position:'relative', transition:'all .15s' }}>
+                    {rec && <div style={{ position:'absolute', top:-10, right:16 }}><Pill variant="ink">Recommended</Pill></div>}
+                    <div className="row ai-c jc-b">
+                      <div className="row ai-c g-3">
+                        <span style={{ width:14, height:14, borderRadius:'50%', border:'1.5px solid '+(on?'var(--accent)':'var(--ink-3)'), background:on?'var(--accent)':'transparent', boxShadow:on?'inset 0 0 0 3px var(--paper-warm)':'none', flexShrink:0 }}/>
+                        <div><div className="serif" style={{ fontSize:18 }}>{name}</div><div className="caption">{tag}</div></div>
+                      </div>
+                      <div style={{ textAlign:'right' }}>
+                        <div className="display" style={{ fontSize:24, lineHeight:1 }}>{p.price}</div>
+                        <div className="caption">{p.period}</div>
+                      </div>
+                    </div>
+                    {on && p.savings && <div className="marginalia" style={{ marginTop:10, paddingTop:10, borderTop:'1px dashed var(--rule)' }}>{p.savings} · works out to {p.monthly}</div>}
+                  </button>
+                );
+              })}
+            </div>
+            <hr className="rule" style={{ margin:'28px 0 20px' }} />
+            <Eyebrow>§ Payment</Eyebrow>
+            <div className="col g-3" style={{ marginTop:12 }}>
+              <Input label="Card number" placeholder="4242 4242 4242 4242" />
+              <div className="row g-2">
+                <Input label="Expiry" placeholder="MM / YY" />
+                <Input label="CVC" placeholder="123" />
+              </div>
+              <Input label="Name on card" placeholder="Ishita Rao" />
+            </div>
+            <div className="row ai-c g-2" style={{ marginTop:16 }}>
+              <span className="caption">or pay with</span>
+              <Btn variant="ghost" size="sm">UPI</Btn>
+              <Btn variant="ghost" size="sm">Net banking</Btn>
+              <Btn variant="ghost" size="sm">Razorpay</Btn>
+            </div>
+            <hr className="rule" style={{ margin:'24px 0' }} />
+            <div className="row ai-c jc-b" style={{ marginBottom:16 }}>
+              <span className="serif" style={{ fontSize:16 }}>Total today</span>
+              <span className="display" style={{ fontSize:28 }}>{plans[plan].price}</span>
+            </div>
+            <Btn variant="accent" size="lg" onClick={onDone} style={{ width:'100%', justifyContent:'center' }}>Unlock dashboard →</Btn>
+            <div className="caption" style={{ marginTop:12, lineHeight:1.55 }}>Secure payment via Razorpay · Cancel anytime from settings · Full refund within 7 days, no questions.</div>
+          </div>
+          <div className="row ai-c jc-c g-4" style={{ marginTop:20, opacity:.7 }}>
+            <span className="caption">🔒 256-bit encrypted</span>
+            <span className="caption">GST invoice included</span>
+          </div>
+        </div>
+      </div>
+      <hr className="rule" style={{ margin:'48px 0 24px' }} />
+      <div className="row ai-c jc-b">
+        <Btn variant="ghost" onClick={onBack}>← Back to preview</Btn>
+        <div className="marginalia">Not ready? Your dashboard will wait in your account for 30 days.</div>
+      </div>
+    </div>
+  );
+};
+
+/* ── App shell ────────────────────────────────────────────── */
+
+const SCREENS = [
+  { group:'Public', items:[{ id:'landing', n:'01', label:'Landing page' },{ id:'signup', n:'02', label:'Sign up / in' }] },
+  { group:'Onboarding', items:[{ id:'onb-connect', n:'03', label:'Connect channel' },{ id:'onb-competitors', n:'04', label:'Competitors' },{ id:'onb-generating', n:'05', label:'Generating' },{ id:'onb-paywall', n:'06', label:'Unlock / paywall' }] },
+];
+const SCREEN_ORDER = SCREENS.flatMap(g => g.items.map(i => i.id));
+
+function App() {
+  const [screen, setScreen] = React.useState(() => localStorage.getItem('tl.screen') || 'landing');
+  React.useEffect(() => { localStorage.setItem('tl.screen', screen); window.scrollTo({ top:0, behavior:'instant' }); }, [screen]);
+
+  const onboardingStep = { 'onb-connect':0, 'onb-competitors':1, 'onb-generating':2, 'onb-paywall':3 }[screen] ?? 0;
+  const go = id => setScreen(id);
+  const next = () => { const i=SCREEN_ORDER.indexOf(screen); if(i<SCREEN_ORDER.length-1) setScreen(SCREEN_ORDER[i+1]); };
+  const back = () => { const i=SCREEN_ORDER.indexOf(screen); if(i>0) setScreen(SCREEN_ORDER[i-1]); };
+
+  const renderScreen = () => {
+    switch(screen) {
+      case 'landing': return <Landing />;
+      case 'signup': return <Signup onComplete={()=>go('onb-connect')} />;
+      case 'onb-connect':
+      case 'onb-competitors':
+      case 'onb-generating':
+      case 'onb-paywall':
+        return (
+          <OnboardingShell step={onboardingStep} maxWidth={screen==='onb-generating'||screen==='onb-paywall'?1100:860}>
+            {screen==='onb-connect' && <OnboardConnect onNext={next} />}
+            {screen==='onb-competitors' && <OnboardCompetitors onNext={next} onBack={back} />}
+            {screen==='onb-generating' && <OnboardGenerating onNext={next} onBack={back} />}
+            {screen==='onb-paywall' && <OnboardPaywall onBack={back} onDone={()=>alert('Dashboard coming in next round!')} />}
+          </OnboardingShell>
+        );
+      default: return <Landing />;
+    }
+  };
+
+  return (
+    <div className="shell">
+      <aside className="nav">
+        <div className="nav-brand">
+          <span style={{ color:'var(--accent)', fontFamily:'var(--mono)', fontSize:14 }}>※</span>
+          <span className="mark">ChannelIQ</span>
+        </div>
+        <div className="caption" style={{ marginBottom:24, lineHeight:1.5 }}>Editorial prototype<br/>v0.1 · Spring '26</div>
+
+        {SCREENS.map(group => (
+          <div key={group.group}>
+            <div className="nav-section">{group.group}</div>
+            {group.items.map(s => (
+              <button key={s.id} onClick={()=>go(s.id)} className={`nav-item${screen===s.id?' on':''}`}>
+                <span className="num">{s.n}</span>
+                <span>{s.label}</span>
+              </button>
+            ))}
+          </div>
+        ))}
+
+        <div style={{ marginTop:32, paddingTop:20, borderTop:'1px solid var(--rule)' }}>
+          <div className="nav-section">Next round</div>
+          <div className="nav-item" style={{ opacity:.5, cursor:'default' }}>
+            <span className="num">07</span><span>Dashboard</span>
+          </div>
+        </div>
+
+        <div style={{ marginTop:'auto', paddingTop:40 }}>
+          <div className="marginalia" style={{ fontSize:12 }}>Navigate with the sidebar to preview each screen.</div>
+        </div>
+      </aside>
+
+      <main style={{ background:'var(--paper)', minHeight:'100vh' }}>
+        {renderScreen()}
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
