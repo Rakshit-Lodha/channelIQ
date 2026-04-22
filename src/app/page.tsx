@@ -1,9 +1,7 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { BILLING_PLANS } from '@/lib/billing/plans'
 import styles from './page.module.css'
 
-const SERIF = "'Instrument Serif', 'EB Garamond', Georgia, serif"
-const MONO = 'var(--font-geist-mono)'
 const methodItems = [
   {
     num: '01',
@@ -86,9 +84,23 @@ const whyRows = [
   ['Made for growth', 'Focused on channel growth and sustainable results.', 'General dashboards that do not focus on growth outcomes.'],
 ] as const
 
+const heroStripItems = [
+  ['Audience insights', 'that go deeper', 'audience'],
+  ['Idea scoring', 'based on demand & competition', 'ideas'],
+  ['Trend tracking', 'that surfaces opportunities', 'trend'],
+  ['Custom reports', 'that save you time', 'reports'],
+] as const
+
+const dashboardStats = [
+  ['Views', '1.2M', '+ 18.7%'],
+  ['Watch time (hrs)', '48.6K', '+ 16.3%'],
+  ['Subscribers', '+8.9K', '+ 22.1%'],
+  ['Est. revenue', '$12.4K', '+ 14.0%'],
+] as const
+
 export default function LandingPage() {
   return (
-    <div style={{ background: 'var(--paper)', minHeight: '100vh' }}>
+    <div className={styles.pageRoot}>
       <nav className={styles.topNav}>
         <div className={styles.topNavInner}>
           <Logo />
@@ -139,8 +151,8 @@ export default function LandingPage() {
               </div>
               <div className={styles.socialProof}>
                 <div className={styles.avatarRow}>
-                  {['A', 'B', 'C', 'D'].map((label, index) => (
-                    <span key={label} className={styles.avatar} style={{ zIndex: 5 - index }}>
+                  {['A', 'B', 'C', 'D'].map((label) => (
+                    <span key={label} className={styles.avatar}>
                       {label}
                     </span>
                   ))}
@@ -156,12 +168,7 @@ export default function LandingPage() {
           <div className={styles.heroStrip}>
             <div className={styles.heroStripTitle}>What&apos;s inside the dashboard</div>
             <div className={styles.heroStripGrid}>
-              {[
-                ['Audience insights', 'that go deeper', 'audience'],
-                ['Idea scoring', 'based on demand & competition', 'ideas'],
-                ['Trend tracking', 'that surfaces opportunities', 'trend'],
-                ['Custom reports', 'that save you time', 'reports'],
-              ].map(([title, body, icon]) => (
+              {heroStripItems.map(([title, body, icon]) => (
                 <div key={title} className={styles.heroStripItem}>
                   <FeatureIcon kind={icon as 'audience' | 'ideas' | 'trend' | 'reports'} />
                   <div>
@@ -177,7 +184,7 @@ export default function LandingPage() {
 
       <Ornament />
 
-      <section className={styles.sectionBlock}>
+      <section className={`${styles.sectionBlock} ${styles.deferredSection}`}>
         <div className={styles.sectionFrame}>
           <h2 className={styles.sectionDisplay}>The method</h2>
           <div className={styles.methodGrid}>
@@ -220,7 +227,7 @@ export default function LandingPage() {
 
       <Ornament />
 
-      <section className={styles.sectionBlock}>
+      <section className={`${styles.sectionBlock} ${styles.deferredSection}`}>
         <div className={styles.sectionFrame}>
           <h2 className={styles.sectionDisplay}>Who it&apos;s for</h2>
           <div className={styles.audienceGrid}>
@@ -269,26 +276,26 @@ export default function LandingPage() {
 
       <Ornament />
 
-      <section id="pricing" style={{ padding: '96px 64px', maxWidth: 1200, margin: '0 auto' }}>
+      <section id="pricing" className={`${styles.pricingSection} ${styles.deferredSection}`}>
         <SectionOpen num="§ 04">Subscription</SectionOpen>
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 48 }}>
-          <h2 style={{ fontFamily: SERIF, fontSize: 56, fontWeight: 400, margin: 0 }}>Monthly plans. Cancel whenever.</h2>
-          <div style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 14, color: 'var(--brass)', maxWidth: 280, textAlign: 'right' }}>
+        <div className={styles.pricingHeader}>
+          <h2 className={styles.pricingTitle}>Monthly plans. Cancel whenever.</h2>
+          <div className={styles.pricingNote}>
             Try first, pay only if it earns its keep.<br />Upgrade when the work gets heavier.
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
+        <div className={styles.pricingGrid}>
           <PlanCard name={BILLING_PLANS.basic.name} price={BILLING_PLANS.basic.price} period={BILLING_PLANS.basic.period} tag="for the first read" features={BILLING_PLANS.basic.features} />
           <PlanCard name={BILLING_PLANS.intermediate.name} price={BILLING_PLANS.intermediate.price} period={BILLING_PLANS.intermediate.period} tag="for the weekly operator" features={BILLING_PLANS.intermediate.features} featured />
           <PlanCard name={BILLING_PLANS.full_access.name} price={BILLING_PLANS.full_access.price} period={BILLING_PLANS.full_access.period} tag="for teams" features={BILLING_PLANS.full_access.features} />
         </div>
       </section>
 
-      <footer style={{ borderTop: '1px solid var(--rule)', padding: '48px 64px', background: 'var(--paper-warm)' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+      <footer className={`${styles.siteFooter} ${styles.deferredSection}`}>
+        <div className={styles.siteFooterInner}>
+          <div className={styles.siteFooterRow}>
             <Logo />
-            <div style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)' }}>© 2026 ChannelIQ · Mumbai</div>
+            <div className={styles.siteFooterMeta}>© 2026 ChannelIQ · Mumbai</div>
           </div>
         </div>
       </footer>
@@ -311,12 +318,7 @@ function DashboardPreviewCard() {
           <div className={styles.dashboardDate}>May 12 – Jun 8, 2024</div>
         </div>
         <div className={styles.dashboardStatsRow}>
-          {[
-            ['Views', '1.2M', '+ 18.7%'],
-            ['Watch time (hrs)', '48.6K', '+ 16.3%'],
-            ['Subscribers', '+8.9K', '+ 22.1%'],
-            ['Est. revenue', '$12.4K', '+ 14.0%'],
-          ].map(([label, value, delta]) => (
+          {dashboardStats.map(([label, value, delta]) => (
             <div key={label} className={styles.statCard}>
               <div className={styles.statLabel}>{label}</div>
               <div className={styles.statNumber}>{value}</div>
@@ -512,25 +514,25 @@ function PlanCard({ name, price, period, tag, features, featured }: {
   featured?: boolean
 }) {
   return (
-    <div style={{ background: 'var(--paper-card)', border: featured ? '1px solid var(--ink)' : '1px solid var(--rule-soft)', borderRadius: 8, padding: 32, position: 'relative' }}>
-      {featured && <div style={{ position: 'absolute', top: -12, left: 32 }}><Pill variant="ink">Most read</Pill></div>}
-      <div style={{ fontFamily: MONO, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--ink-3)' }}>{tag}</div>
-      <div style={{ fontFamily: SERIF, fontSize: 28, marginTop: 6 }}>{name}</div>
-      <hr style={{ border: 'none', borderTop: '1px solid var(--rule)', margin: '16px 0' }} />
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-        <span style={{ fontFamily: SERIF, fontSize: 48, fontWeight: 400, letterSpacing: '-0.02em' }}>{price}</span>
-        <span style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)' }}>{period}</span>
+    <div className={`${styles.planCard} ${featured ? styles.planCardFeatured : ''}`}>
+      {featured && <div className={styles.planPillWrap}><Pill variant="ink">Most read</Pill></div>}
+      <div className={styles.planTag}>{tag}</div>
+      <div className={styles.planName}>{name}</div>
+      <hr className={styles.planRule} />
+      <div className={styles.planPriceRow}>
+        <span className={styles.planPrice}>{price}</span>
+        <span className={styles.planPeriod}>{period}</span>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
+      <div className={styles.planFeatures}>
         {features.map((feature) => (
-          <div key={feature} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontFamily: SERIF, color: 'var(--accent)', fontSize: 14 }}>-</span>
-            <span style={{ fontSize: 13, color: 'var(--ink-2)' }}>{feature}</span>
+          <div key={feature} className={styles.planFeature}>
+            <span className={styles.planFeatureDash}>-</span>
+            <span className={styles.planFeatureText}>{feature}</span>
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 32 }}>
-        <ButtonLink variant={featured ? 'primary' : 'ghost'} href="/login" style={{ width: '100%', justifyContent: 'center' }}>
+      <div className={styles.planButtonWrap}>
+        <ButtonLink variant={featured ? 'primary' : 'ghost'} href="/login" className={styles.planButton}>
           Choose {name}
         </ButtonLink>
       </div>
@@ -538,56 +540,44 @@ function PlanCard({ name, price, period, tag, features, featured }: {
   )
 }
 
-function Logo({ size = 28 }: { size?: number }) {
+function Logo() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-      <span style={{ fontFamily: MONO, fontSize: size * 0.5, color: 'var(--accent)' }}>※</span>
-      <span style={{ fontFamily: SERIF, fontSize: size, letterSpacing: '-0.02em', lineHeight: 1, whiteSpace: 'nowrap' }}>
+    <div className={styles.logo}>
+      <span className={styles.logoMark}>※</span>
+      <span className={styles.logoWordmark}>
         ChannelIQ
       </span>
     </div>
   )
 }
 
-function Eyebrow({ children, accent }: { children: ReactNode; accent?: boolean }) {
-  return (
-    <div style={{ fontFamily: MONO, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.16em', color: accent ? 'var(--accent)' : 'var(--ink-3)' }}>
-      {children}
-    </div>
-  )
-}
-
 function SectionOpen({ num, children }: { num: string; children: ReactNode }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-      <span style={{ display: 'block', width: 28, height: 1, background: 'var(--ink)', flexShrink: 0 }} />
-      <span style={{ fontFamily: MONO, fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>{num}</span>
-      <span style={{ fontFamily: MONO, fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>{children}</span>
+    <div className={styles.sectionOpen}>
+      <span className={styles.sectionOpenRule} />
+      <span className={styles.sectionOpenText}>{num}</span>
+      <span className={styles.sectionOpenText}>{children}</span>
     </div>
   )
 }
 
 function Pill({ children, variant = 'default' }: { children: ReactNode; variant?: 'default' | 'ink' }) {
-  const bg = variant === 'ink' ? 'var(--ink)' : 'var(--paper-warm)'
-  const color = variant === 'ink' ? 'var(--paper)' : 'var(--ink-2)'
-  const border = variant === 'ink' ? 'var(--ink)' : 'var(--rule-soft)'
-
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '3px 10px', borderRadius: 999, background: bg, border: `1px solid ${border}`, fontFamily: MONO, fontSize: 11, color, letterSpacing: '0.02em', lineHeight: 1.5 }}>
+    <span className={`${styles.pill} ${variant === 'ink' ? styles.pillInk : styles.pillDefault}`}>
       {children}
     </span>
   )
 }
 
-function ButtonLink({ children, href, variant = 'primary', size = 'md', style }: {
+function ButtonLink({ children, href, variant = 'primary', size = 'md', className }: {
   children: ReactNode
   href: string
   variant?: ButtonVariant
   size?: ButtonSize
-  style?: CSSProperties
+  className?: string
 }) {
   return (
-    <a href={href} style={{ ...buttonStyle(variant, size), ...style }}>
+    <a href={href} className={[styles.buttonLink, styles[`button${variant[0].toUpperCase()}${variant.slice(1)}`], styles[`button${size[0].toUpperCase()}${size.slice(1)}`], className].filter(Boolean).join(' ')}>
       {children}
     </a>
   )
@@ -595,10 +585,10 @@ function ButtonLink({ children, href, variant = 'primary', size = 'md', style }:
 
 function Ornament() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, color: 'var(--ink-3)', margin: '20px 0' }}>
-      <span style={{ width: 40, height: 1, background: 'currentColor', opacity: 0.5 }} />
-      <span style={{ fontFamily: SERIF, fontSize: 18 }}>❦</span>
-      <span style={{ width: 40, height: 1, background: 'currentColor', opacity: 0.5 }} />
+    <div className={styles.ornament}>
+      <span className={styles.ornamentRule} />
+      <span className={styles.ornamentMark}>❦</span>
+      <span className={styles.ornamentRule} />
     </div>
   )
 }
@@ -623,7 +613,7 @@ function MiniLine({
   }).join(' ')
 
   return (
-    <svg width={w} height={h} style={{ display: 'block' }}>
+    <svg width={w} height={h} className={styles.miniLine} aria-hidden="true">
       <path d={ghost} fill="none" stroke="#B7AEA2" strokeWidth="1.8" strokeDasharray="2.5 5" strokeLinecap="round" strokeLinejoin="round" opacity="0.95" />
       <path d={d} fill="none" stroke="#D1593D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -632,39 +622,3 @@ function MiniLine({
 
 type ButtonVariant = 'primary' | 'accent' | 'ghost'
 type ButtonSize = 'sm' | 'md' | 'lg'
-
-function buttonStyle(variant: ButtonVariant, size: ButtonSize): CSSProperties {
-  const padding = size === 'lg' ? '14px 24px' : size === 'sm' ? '7px 14px' : '10px 18px'
-  const fontSize = size === 'lg' ? 15 : size === 'sm' ? 13 : 14
-
-  return {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 8,
-    padding,
-    borderRadius: 8,
-    border: '1px solid transparent',
-    fontFamily: 'var(--font-geist-sans)',
-    fontSize,
-    fontWeight: 500,
-    letterSpacing: '-0.005em',
-    cursor: 'pointer',
-    lineHeight: 1,
-    textDecoration: 'none',
-    ...(variant === 'primary' && { background: 'var(--ink)', color: 'var(--paper)' }),
-    ...(variant === 'accent' && { background: 'var(--accent)', color: '#fff' }),
-    ...(variant === 'ghost' && { background: 'transparent', color: 'var(--ink)', borderColor: 'var(--rule)' }),
-  }
-}
-
-const inputStyle: CSSProperties = {
-  width: '100%',
-  background: 'var(--paper-card)',
-  border: '1px solid var(--rule)',
-  borderRadius: 6,
-  padding: '16px 18px',
-  fontFamily: 'var(--font-geist-sans)',
-  fontSize: 16,
-  color: 'var(--ink)',
-  outline: 'none',
-}
