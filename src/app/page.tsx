@@ -1,75 +1,173 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { BILLING_PLANS } from '@/lib/billing/plans'
+import styles from './page.module.css'
 
 const SERIF = "'Instrument Serif', 'EB Garamond', Georgia, serif"
 const MONO = 'var(--font-geist-mono)'
+const methodItems = [
+  {
+    num: '01',
+    title: 'Uncover demand',
+    body: 'We analyze search, YouTube traffic, and engagement signals to reveal what your audience is actively looking for.',
+    icon: 'search',
+  },
+  {
+    num: '02',
+    title: 'Validate opportunity',
+    body: 'Our scoring system evaluates competition, saturation, and audience fit so you can focus on ideas with the highest potential.',
+    icon: 'target',
+  },
+  {
+    num: '03',
+    title: 'Create with confidence',
+    body: 'Turn insights into titles, topics, and content plans so every upload has a purpose.',
+    icon: 'bars',
+  },
+] as const
+
+const problemItems = [
+  {
+    title: 'Guessing what your audience wants',
+    body: 'Most creators rely on gut feeling or surface-level trends and hope for the best.',
+  },
+  {
+    title: 'Format confusion and inconsistency',
+    body: 'It is hard to know which formats, topics, and angles actually resonate.',
+  },
+  {
+    title: 'Competitor blind spots',
+    body: 'Without deeper context, you cannot see what is working for others or where you can win.',
+  },
+  {
+    title: 'Low-demand ideas waste time',
+    body: 'Chasing the wrong ideas leads to low views, slow growth, and burnout.',
+  },
+] as const
+
+const audienceItems = [
+  {
+    title: 'Solo creators',
+    body: 'Build a sustainable channel with content that your audience actually wants.',
+    icon: 'solo',
+  },
+  {
+    title: 'Creator teams',
+    body: 'Make smarter decisions together and ship content with confidence.',
+    icon: 'team',
+  },
+  {
+    title: 'YouTube educators',
+    body: 'Deliver more value with lessons and topics your audience is searching for.',
+    icon: 'video',
+  },
+  {
+    title: 'Agencies',
+    body: 'Scale insights across multiple channels and prove results to clients.',
+    icon: 'agency',
+  },
+  {
+    title: 'Brands & marketing teams',
+    body: 'Find the right creators, topics, and angles for your campaigns.',
+    icon: 'megaphone',
+  },
+  {
+    title: 'Analysts & strategists',
+    body: 'Go beyond vanity metrics with data that drives strategy.',
+    icon: 'bars',
+  },
+] as const
+
+const whyRows = [
+  ['Built for creators', 'Built specifically for YouTube creators and their unique challenges.', 'Designed for broad use cases, not creator workflows.'],
+  ['Opportunity discovery', 'Scores ideas on demand, competition, and audience fit.', 'No idea scoring or opportunity identification.'],
+  ['Actionable insights', 'Clear recommendations you can turn into videos.', 'Raw data with no guidance on what to do.'],
+  ['Competitor intelligence', 'See what is working for others and where you can win.', 'Surface-level metrics with limited context.'],
+  ['Saves you time', 'All-in-one platform. Less time in spreadsheets and tabs.', 'Requires multiple tools and manual analysis.'],
+  ['Made for growth', 'Focused on channel growth and sustainable results.', 'General dashboards that do not focus on growth outcomes.'],
+] as const
 
 export default function LandingPage() {
   return (
     <div style={{ background: 'var(--paper)', minHeight: '100vh' }}>
-      <nav style={{ borderBottom: '1px solid var(--rule)', padding: '18px 64px', position: 'sticky', top: 0, background: 'var(--paper)', zIndex: 50 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: 1200, margin: '0 auto' }}>
+      <nav className={styles.topNav}>
+        <div className={styles.topNavInner}>
           <Logo />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-            <a href="#pricing" style={{ textDecoration: 'none', fontSize: 14, color: 'var(--ink-2)' }}>
+          <div className={styles.topNavLinks}>
+            <a href="#product" className={styles.topNavLink}>
+              Product
+            </a>
+            <a href="#solutions" className={styles.topNavLink}>
+              Solutions
+            </a>
+            <a href="#resources" className={styles.topNavLink}>
+              Resources
+            </a>
+            <a href="#pricing" className={styles.topNavLink}>
               Pricing
             </a>
-            <ButtonLink variant="ghost" size="sm" href="/login">Sign in</ButtonLink>
-            <ButtonLink variant="accent" size="sm" href="/login">Begin -&gt;</ButtonLink>
+          </div>
+          <div className={styles.topNavActions}>
+            <a href="/login" className={styles.topNavMutedLink}>
+              Log in
+            </a>
+            <a href="/login" className={`${styles.heroButton} ${styles.heroButtonPrimary}`}>
+              Start free trial
+            </a>
           </div>
         </div>
       </nav>
 
-      <section style={{ padding: '96px 64px 64px', maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 64, alignItems: 'start' }}>
-          <div>
-            <Eyebrow accent>A quieter way to grow · Issue 001</Eyebrow>
-            <h1 style={{ fontFamily: SERIF, fontSize: 92, fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 0.95, margin: '16px 0 24px' }}>
-              Stop <span style={{ fontStyle: 'italic', color: 'var(--accent)' }}>guessing,</span><br />
-              what to <span style={{ fontStyle: 'italic', color: 'var(--brass)' }}>post.</span>
-            </h1>
-            <p style={{ fontSize: 17, lineHeight: 1.55, color: 'var(--ink-2)', maxWidth: 480, marginTop: 28 }}>
-              ChannelIQ reads your channel and your competitors&apos; the way a good editor reads a newspaper -
-              looking for what&apos;s missing, what&apos;s working, and what to write next.
-            </p>
-            <form action="/login" style={{ marginTop: 40 }}>
-              <label htmlFor="channel-url" style={{ display: 'block', fontFamily: MONO, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--ink-3)', marginBottom: 6 }}>
-                Paste your channel to begin
-              </label>
-              <div style={{ display: 'flex', gap: 8, maxWidth: 520 }}>
-                <input
-                  id="channel-url"
-                  name="channel"
-                  placeholder="youtube.com/@yourchannel"
-                  style={inputStyle}
-                />
-                <button type="submit" style={{ ...buttonStyle('accent', 'lg'), whiteSpace: 'nowrap' }}>Begin -&gt;</button>
+      <section className={styles.heroSection}>
+        <div className={styles.heroShell}>
+          <div className={styles.heroGrid}>
+            <div className={styles.heroCopyCol}>
+              <h1 className={styles.heroTitle}>
+                Stop guessing
+                <br />
+                what to post
+              </h1>
+              <p className={styles.heroBody}>
+                ChannelIQ turns YouTube data into clear direction so you can create videos people actually want to watch.
+              </p>
+            <div className={styles.heroActions}>
+                <a href="/login" className={`${styles.heroButton} ${styles.heroButtonPrimary}`}>
+                  Start free trial
+                </a>
+                <a href="/login" className={`${styles.heroButton} ${styles.heroButtonSecondary}`}>
+                  View demo
+                </a>
               </div>
-              <div style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)', marginTop: 12 }}>
-                Free to try · No card until you&apos;ve seen the dashboard
+              <div className={styles.socialProof}>
+                <div className={styles.avatarRow}>
+                  {['A', 'B', 'C', 'D'].map((label, index) => (
+                    <span key={label} className={styles.avatar} style={{ zIndex: 5 - index }}>
+                      {label}
+                    </span>
+                  ))}
+                </div>
+                <div className={styles.proofText}>
+                  <div className={styles.stars}>★★★★★</div>
+                  <div>Trusted by 8,200+ creators and teams</div>
+                </div>
               </div>
-            </form>
-          </div>
-          <DashboardPreviewCard />
-        </div>
-
-        <div style={{ marginTop: 96, paddingTop: 24, borderTop: '1px solid var(--rule)' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 48 }}>
-            <div>
-              <div style={{ fontFamily: MONO, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--ink-3)' }}>In this issue</div>
-              <div style={{ fontFamily: SERIF, fontSize: 22, marginTop: 8 }}>What&apos;s inside the dashboard</div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 40, flex: 1, maxWidth: 780 }}>
+            <DashboardPreviewCard />
+          </div>
+          <div className={styles.heroStrip}>
+            <div className={styles.heroStripTitle}>What&apos;s inside the dashboard</div>
+            <div className={styles.heroStripGrid}>
               {[
-                ['01', 'Benchmark', 'You vs your neighbourhood'],
-                ['02', 'Outliers', 'Videos that broke the pattern'],
-                ['03', 'Atlas', 'Unwritten topics in your niche'],
-                ['04', 'Timing', 'When your audience shows up'],
-              ].map(([n, t, d]) => (
-                <div key={n}>
-                  <div style={{ fontFamily: MONO, fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em' }}>{n}</div>
-                  <div style={{ fontFamily: SERIF, fontSize: 20, marginTop: 6 }}>{t}</div>
-                  <div style={{ fontSize: 13, color: 'var(--ink-3)', marginTop: 4 }}>{d}</div>
+                ['Audience insights', 'that go deeper', 'audience'],
+                ['Idea scoring', 'based on demand & competition', 'ideas'],
+                ['Trend tracking', 'that surfaces opportunities', 'trend'],
+                ['Custom reports', 'that save you time', 'reports'],
+              ].map(([title, body, icon]) => (
+                <div key={title} className={styles.heroStripItem}>
+                  <FeatureIcon kind={icon as 'audience' | 'ideas' | 'trend' | 'reports'} />
+                  <div>
+                    <div className={styles.heroStripItemTitle}>{title}</div>
+                    <div className={styles.heroStripItemBody}>{body}</div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -79,25 +177,93 @@ export default function LandingPage() {
 
       <Ornament />
 
-      <section style={{ padding: '64px 64px 96px', maxWidth: 1200, margin: '0 auto' }}>
-        <SectionOpen num="§ 01">The method</SectionOpen>
-        <h2 style={{ fontFamily: SERIF, fontSize: 56, fontWeight: 400, maxWidth: 720, margin: '8px 0 48px' }}>
-          Three inputs. One honest look at the field you&apos;re playing on.
-        </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 48 }}>
-          {[
-            { num: 'I.', title: 'Connect your channel', body: 'A read-only handshake with YouTube. We fetch the last two years of your uploads, views, retention, and comments.', note: 'Takes about forty seconds.' },
-            { num: 'II.', title: 'Name your neighbours', body: 'Three to ten channels that orbit yours. Direct competitors, aspirational ones, or the one creator whose numbers keep you up at night.', note: 'We suggest ten based on your content.' },
-            { num: 'III.', title: 'Read the dashboard', body: 'A quiet room where your channel and theirs are laid side by side - plotted, compared, and annotated. Refreshed every morning.', note: 'First edition prints in four minutes.' },
-          ].map((s) => (
-            <article key={s.num}>
-              <div style={{ fontFamily: SERIF, fontSize: 48, color: 'var(--accent)', lineHeight: 1, marginBottom: 16 }}>{s.num}</div>
-              <h3 style={{ fontFamily: SERIF, fontSize: 26, fontWeight: 400, margin: '0 0 12px' }}>{s.title}</h3>
-              <p style={{ fontSize: 15, lineHeight: 1.6, color: 'var(--ink-2)', margin: 0 }}>{s.body}</p>
-              <hr style={{ border: 'none', borderTop: '1px dashed var(--rule)', margin: '24px 0' }} />
-              <div style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 14, color: 'var(--brass)' }}>{s.note}</div>
-            </article>
-          ))}
+      <section className={styles.sectionBlock}>
+        <div className={styles.sectionFrame}>
+          <h2 className={styles.sectionDisplay}>The method</h2>
+          <div className={styles.methodGrid}>
+            {methodItems.map((item) => (
+              <article key={item.num} className={styles.methodCard}>
+                <div className={styles.methodNum}>{item.num}</div>
+                <div className={styles.methodCardInner}>
+                  <span className={styles.methodIconWrap}>
+                    <MethodIcon kind={item.icon as 'search' | 'target' | 'bars'} />
+                  </span>
+                  <div>
+                    <h3 className={styles.methodTitle}>{item.title}</h3>
+                    <p className={styles.methodBody}>{item.body}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className={styles.problemBlock}>
+            <h2 className={styles.sectionDisplay}>The problem</h2>
+            <div className={styles.problemGrid}>
+              {problemItems.map((item) => (
+                <article key={item.title} className={styles.problemCard}>
+                  <span className={styles.problemIconWrap}>
+                    <ProblemIcon />
+                  </span>
+                  <h3 className={styles.problemTitle}>{item.title}</h3>
+                  <p className={styles.problemBody}>{item.body}</p>
+                </article>
+              ))}
+            </div>
+            <div className={styles.problemCallout}>
+              <SparkIcon />
+              <span>ChannelIQ removes the guesswork so you can create with clarity and grow faster.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Ornament />
+
+      <section className={styles.sectionBlock}>
+        <div className={styles.sectionFrame}>
+          <h2 className={styles.sectionDisplay}>Who it&apos;s for</h2>
+          <div className={styles.audienceGrid}>
+            {audienceItems.map((item) => (
+              <article key={item.title} className={styles.audienceCard}>
+                <span className={styles.audienceIconWrap}>
+                  <AudienceIcon kind={item.icon as 'solo' | 'team' | 'video' | 'agency' | 'megaphone' | 'bars'} />
+                </span>
+                <h3 className={styles.audienceTitle}>{item.title}</h3>
+                <p className={styles.audienceBody}>{item.body}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className={styles.whyBlock}>
+            <h2 className={styles.sectionDisplay}>Why ChannelIQ</h2>
+            <div className={styles.whyTable}>
+              <div className={styles.whyFeatureColumn}>
+                {whyRows.map(([label]) => (
+                  <div key={label} className={styles.whyFeatureCell}>
+                    {label}
+                  </div>
+                ))}
+              </div>
+              <div className={styles.whyHighlightColumn}>
+                <div className={styles.whyColumnTitle}>ChannelIQ</div>
+                {whyRows.map(([label, ours]) => (
+                  <div key={label} className={styles.whyValueCell}>
+                    <span className={styles.whyCheck}>●</span>
+                    <span>{ours}</span>
+                  </div>
+                ))}
+              </div>
+              <div className={styles.whyPlainColumn}>
+                <div className={styles.whyColumnTitleMuted}>Generic analytics tools</div>
+                {whyRows.map(([label, , generic]) => (
+                  <div key={label} className={styles.whyMutedCell}>
+                    {generic}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -132,37 +298,208 @@ export default function LandingPage() {
 
 function DashboardPreviewCard() {
   return (
-    <div style={{ background: 'var(--paper-card)', border: '1px solid var(--rule-soft)', borderRadius: 8, padding: 28, boxShadow: '0 1px 0 rgba(26,26,26,0.04), 0 20px 40px -18px rgba(26,26,26,0.15)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Eyebrow accent>Today&apos;s field report</Eyebrow>
-        <span style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)' }}>18 Apr · 06:00 IST</span>
-      </div>
-      <hr style={{ border: 'none', borderTop: '1px solid var(--rule)', margin: '12px 0 20px' }} />
-      <div style={{ fontFamily: SERIF, fontSize: 26, lineHeight: 1.15, marginBottom: 8 }}>
-        You&apos;re growing <span style={{ fontStyle: 'italic', color: 'var(--brass)' }}>1.4x faster</span> than the median.
-      </div>
-      <div style={{ fontSize: 13, color: 'var(--ink-3)', marginBottom: 24 }}>
-        But three neighbours posted about <em style={{ color: 'var(--brass)' }}>&quot;SIP vs NPS&quot;</em> this week.
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-        <span style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)' }}>Subs · last 30d</span>
-        <span style={{ fontFamily: MONO, fontSize: 12, color: 'var(--accent)' }}>+4,820 ▲</span>
-      </div>
-      <MiniLine w={380} h={72} data={[4, 5, 6, 8, 7, 10, 13, 11, 14, 17, 16, 20, 22, 24]} />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginTop: 24, paddingTop: 20, borderTop: '1px solid var(--rule)' }}>
-        {[
-          ['Outliers', '2', 'this week'],
-          ['Unwritten', '14', 'in your niche'],
-          ['Best day', 'Sat', '10 AM IST'],
-        ].map(([l, v, s]) => (
-          <div key={l}>
-            <div style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)' }}>{l}</div>
-            <div style={{ fontFamily: SERIF, fontSize: 26, lineHeight: 1, margin: '4px 0' }}>{v}</div>
-            <div style={{ fontFamily: MONO, fontSize: 11, color: 'var(--ink-3)' }}>{s}</div>
-          </div>
+    <div className={styles.dashboardCard}>
+      <div className={styles.dashboardSidebar}>
+        <div className={styles.dashboardBrand}>IQ</div>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <span key={index} className={styles.sidebarDot} />
         ))}
       </div>
+      <div className={styles.dashboardSurface}>
+        <div className={styles.dashboardHeader}>
+          <div className={styles.dashboardOverview}>Overview</div>
+          <div className={styles.dashboardDate}>May 12 – Jun 8, 2024</div>
+        </div>
+        <div className={styles.dashboardStatsRow}>
+          {[
+            ['Views', '1.2M', '+ 18.7%'],
+            ['Watch time (hrs)', '48.6K', '+ 16.3%'],
+            ['Subscribers', '+8.9K', '+ 22.1%'],
+            ['Est. revenue', '$12.4K', '+ 14.0%'],
+          ].map(([label, value, delta]) => (
+            <div key={label} className={styles.statCard}>
+              <div className={styles.statLabel}>{label}</div>
+              <div className={styles.statNumber}>{value}</div>
+              <div className={styles.statDelta}>{delta}</div>
+            </div>
+          ))}
+        </div>
+        <div className={styles.dashboardMain}>
+          <div className={styles.chartPanel}>
+            <div className={styles.chartTitle}>Audience interest over time</div>
+            <MiniLine w={430} h={128} data={[44, 49, 61, 54, 63, 78, 72, 88, 81, 83, 74, 79, 69, 68, 85, 92, 90]} />
+            <div className={styles.chartLegend}>
+              <span><i className={styles.legendLive} /> This period</span>
+              <span><i className={styles.legendPast} /> Previous period</span>
+            </div>
+          </div>
+          <div className={styles.opportunityPanel}>
+            <div className={styles.chartTitle}>Top opportunity</div>
+            <div className={styles.opportunityTitle}>Photography tips for beginners</div>
+            <div className={styles.opportunityMeta}>
+              <span>High score</span>
+              <span className={styles.opportunityBadge}>92</span>
+            </div>
+            <div className={styles.opportunityRange}>
+              <div className={styles.statLabel}>Est. views</div>
+              <div className={styles.opportunityViews}>120K – 180K</div>
+            </div>
+            <a href="/login" className={`${styles.heroButton} ${styles.heroButtonPrimary} ${styles.panelButton}`}>
+              View details
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
+  )
+}
+
+function FeatureIcon({ kind }: { kind: 'audience' | 'ideas' | 'trend' | 'reports' }) {
+  if (kind === 'audience') {
+    return (
+      <svg viewBox="0 0 24 24" className={styles.featureIcon} aria-hidden="true">
+        <circle cx="12" cy="8" r="4.2" fill="none" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M4.5 21c0-4.2 3.4-7.1 7.5-7.1s7.5 2.9 7.5 7.1" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      </svg>
+    )
+  }
+
+  if (kind === 'ideas') {
+    return (
+      <svg viewBox="0 0 24 24" className={styles.featureIcon} aria-hidden="true">
+        <path d="M12 3.5a6.1 6.1 0 0 0-3.9 10.8c1.1 1 1.7 2 1.7 3.2h4.4c0-1.2.5-2.2 1.6-3.2A6.1 6.1 0 0 0 12 3.5Z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+        <path d="M10.2 20h3.6M9.8 17.5h4.4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      </svg>
+    )
+  }
+
+  if (kind === 'trend') {
+    return (
+      <svg viewBox="0 0 24 24" className={styles.featureIcon} aria-hidden="true">
+        <path d="M4 19.5h16M4 19.5V4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        <path d="m7 14.5 3.2-3.2 2.8 2.7 5.1-5.3" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M15.8 8.8h2.9v2.9" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" className={styles.featureIcon} aria-hidden="true">
+      <rect x="5" y="3.5" width="14" height="17" rx="2.2" fill="none" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M8.3 8h7.4M8.3 11.5h7.4M8.3 17.2h1.8M11.3 15.2v4M14.5 13.5v5.7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function MethodIcon({ kind }: { kind: 'search' | 'target' | 'bars' }) {
+  if (kind === 'search') {
+    return (
+      <svg viewBox="0 0 24 24" className={styles.methodIcon} aria-hidden="true">
+        <circle cx="10.5" cy="10.5" r="5.8" fill="none" stroke="currentColor" strokeWidth="1.8" />
+        <path d="m15.2 15.2 4.1 4.1" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    )
+  }
+
+  if (kind === 'target') {
+    return (
+      <svg viewBox="0 0 24 24" className={styles.methodIcon} aria-hidden="true">
+        <circle cx="12" cy="12" r="6.2" fill="none" stroke="currentColor" strokeWidth="1.7" />
+        <circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M12 3.2v3M12 17.8v3M3.2 12h3M17.8 12h3" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" className={styles.methodIcon} aria-hidden="true">
+      <path d="M4 20h16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      <rect x="6" y="10" width="3.4" height="8" rx="0.8" fill="none" stroke="currentColor" strokeWidth="1.7" />
+      <rect x="10.8" y="6.5" width="3.4" height="11.5" rx="0.8" fill="none" stroke="currentColor" strokeWidth="1.7" />
+      <rect x="15.6" y="3.5" width="3.4" height="14.5" rx="0.8" fill="none" stroke="currentColor" strokeWidth="1.7" />
+    </svg>
+  )
+}
+
+function ProblemIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className={styles.problemIcon} aria-hidden="true">
+      <circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M12 7.4v6.2" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
+      <circle cx="12" cy="17.4" r="1" fill="currentColor" />
+    </svg>
+  )
+}
+
+function SparkIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className={styles.sparkIcon} aria-hidden="true">
+      <circle cx="12" cy="12" r="3.1" fill="none" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M12 3.2v3.1M12 17.7v3.1M3.2 12h3.1M17.7 12h3.1M5.7 5.7l2.2 2.2M16.1 16.1l2.2 2.2M18.3 5.7l-2.2 2.2M7.9 16.1l-2.2 2.2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function AudienceIcon({ kind }: { kind: 'solo' | 'team' | 'video' | 'agency' | 'megaphone' | 'bars' }) {
+  if (kind === 'solo') {
+    return (
+      <svg viewBox="0 0 24 24" className={styles.audienceIcon} aria-hidden="true">
+        <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M5.5 20c0-4 3.1-6.9 6.5-6.9s6.5 2.9 6.5 6.9" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      </svg>
+    )
+  }
+
+  if (kind === 'team') {
+    return (
+      <svg viewBox="0 0 24 24" className={styles.audienceIcon} aria-hidden="true">
+        <circle cx="12" cy="8.7" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        <circle cx="6.5" cy="10" r="2.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        <circle cx="17.5" cy="10" r="2.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M8.5 20c0-3 1.8-5.4 3.5-5.4s3.5 2.4 3.5 5.4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M2.8 18.7c0-2.5 1.7-4.4 3.7-4.4M21.2 18.7c0-2.5-1.7-4.4-3.7-4.4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    )
+  }
+
+  if (kind === 'video') {
+    return (
+      <svg viewBox="0 0 24 24" className={styles.audienceIcon} aria-hidden="true">
+        <rect x="4" y="5" width="16" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="1.7" />
+        <path d="m10 8.4 5 2.6-5 2.6Z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+        <path d="M8 19.5h8" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      </svg>
+    )
+  }
+
+  if (kind === 'agency') {
+    return (
+      <svg viewBox="0 0 24 24" className={styles.audienceIcon} aria-hidden="true">
+        <path d="M4 20h16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        <rect x="5.2" y="10.5" width="4.2" height="7.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
+        <rect x="10.8" y="6.8" width="4.2" height="11.2" fill="none" stroke="currentColor" strokeWidth="1.7" />
+        <rect x="16.4" y="4.2" width="2.6" height="13.8" fill="none" stroke="currentColor" strokeWidth="1.7" />
+      </svg>
+    )
+  }
+
+  if (kind === 'megaphone') {
+    return (
+      <svg viewBox="0 0 24 24" className={styles.audienceIcon} aria-hidden="true">
+        <path d="M4.8 11.8h4.1l5.9-3.6v7.2l-5.9-3.6H4.8a2.2 2.2 0 1 1 0-4.4h4.1" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+        <path d="m9.1 12 1.5 5.1" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        <path d="M17 9.2c1.4.7 2.4 2 2.8 3.5M17 14.8c1.4-.7 2.4-2 2.8-3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" className={styles.audienceIcon} aria-hidden="true">
+      <path d="M4 20h16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      <rect x="5.2" y="11.5" width="3.2" height="6.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
+      <rect x="10.4" y="8.2" width="3.2" height="9.8" fill="none" stroke="currentColor" strokeWidth="1.7" />
+      <rect x="15.6" y="4.8" width="3.2" height="13.2" fill="none" stroke="currentColor" strokeWidth="1.7" />
+    </svg>
   )
 }
 
@@ -268,25 +605,27 @@ function Ornament() {
 
 function MiniLine({
   data,
-  color = 'var(--accent)',
   h,
   w,
 }: {
   data: number[]
-  color?: string
   h: number
   w: number
 }) {
   const max = Math.max(...data)
   const min = Math.min(...data)
   const step = w / (data.length - 1)
-  const pts = data.map((v, i) => [i * step, h - ((v - min) / (max - min || 1)) * (h - 4) - 2] as [number, number])
+  const pts = data.map((v, i) => [i * step, h - ((v - min) / (max - min || 1)) * (h - 26) - 10] as [number, number])
   const d = pts.map((p, i) => (i === 0 ? `M ${p[0]},${p[1]}` : `L ${p[0]},${p[1]}`)).join(' ')
+  const ghost = pts.map((p, i) => {
+    const y = Math.min(h - 10, p[1] + (i % 3 === 0 ? 18 : 12))
+    return i === 0 ? `M ${p[0]},${y}` : `L ${p[0]},${y}`
+  }).join(' ')
 
   return (
     <svg width={w} height={h} style={{ display: 'block' }}>
-      <path d={d} fill="none" stroke={color} strokeWidth="1.5" />
-      {pts.map((p, i) => <circle key={`${p[0]}-${p[1]}`} cx={p[0]} cy={p[1]} r="1.8" fill={color} opacity={i === pts.length - 1 ? 1 : 0.3} />)}
+      <path d={ghost} fill="none" stroke="#B7AEA2" strokeWidth="1.8" strokeDasharray="2.5 5" strokeLinecap="round" strokeLinejoin="round" opacity="0.95" />
+      <path d={d} fill="none" stroke="#D1593D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
